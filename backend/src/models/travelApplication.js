@@ -1,5 +1,5 @@
 // src/models/TravelApplication.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const travelApplicationSchema = new mongoose.Schema(
   {
@@ -20,11 +20,13 @@ const travelApplicationSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // gives you createdAt & updatedAt automatically
+    timestamps: true, // automatically adds createdAt & updatedAt
   }
 );
 
-// Optional: for faster queries later
+// Optional index for faster queries
 travelApplicationSchema.index({ nationality: 1, travelDestination: 1 });
 
-module.exports = mongoose.model('TravelApplication', travelApplicationSchema);
+const TravelApplication = mongoose.model('TravelApplication', travelApplicationSchema);
+
+export default TravelApplication;

@@ -1,14 +1,15 @@
 // src/routes/travelRoutes.js
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   getCountries,
   submitTravelApplication,
   getAllApplications
-} = require('../controllers/travelController');
+} from '../controllers/travelController.js'; // note the .js extension
+
+const router = express.Router();
 
 router.get('/countries', getCountries);
 router.post('/submit', submitTravelApplication);
 router.get('/applications', getAllApplications);
 
-module.exports = router;
+export default router;

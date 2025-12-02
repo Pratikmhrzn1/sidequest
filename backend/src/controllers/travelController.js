@@ -1,31 +1,44 @@
-const TravelApplication = require('../models/travelApplication');
-const { fetchCountries } = require('../../../frontend/app/data/countries');
+// src/controllers/travelController.js
+import TravelApplication from '../models/travelApplication.js';
+import { fetchCountries } from '../../../frontend/app/data/countries.js';
 
 let validCountryNames = null;
 
 const loadValidCountries = async () => {
   if (!validCountryNames) {
-    const countries = await fetchCountries();
-    validCountryNames = new Set(countries.map(c => c.name.toLowerCase().trim()));
+    try {
+      const countries = await fetchCountries();
+      validCountryNames = new Set(countries.map(c => c.name.toLowerCase().trim()));
+      console.log(`Loaded ${validCountryNames.size} valid countries`);
+    } catch (err) {
+      console.error('Error loading countries:', err);
+      throw err;
+    }
   }
   return validCountryNames;
 };
 
-const getCountries = async (req, res) => {
+export const getCountries = async (req, res) => {
   try {
     const countries = await fetchCountries();
     const names = countries.map(c => c.name);
+    console.log(`Returning ${names.length} countries`);
     res.json({ success: true, count: names.length, countries: names, fullData: countries });
-  } catch {
-    res.status(500).json({ success: false, message: 'Failed to load countries' });
+  } catch (err) {
+    console.error('Failed to get countries:', err);
+    res.status(500).json({ success: false, message: 'Failed to load countries', error: err.message });
   }
 };
 
-const submitTravelApplication = async (req, res) => {
+export const submitTravelApplication = async (req, res) => {
+  console.log('Received request body:', req.body);
+
   let { countryOfResidence, travelDestination, nationality } = req.body;
 
-  if (!countryOfResidence || !travelDestination || !nationality)
+  if (!countryOfResidence || !travelDestination || !nationality) {
+    console.warn('Missing required fields');
     return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
 
   countryOfResidence = countryOfResidence.trim();
   travelDestination = travelDestination.trim();
@@ -39,12 +52,20 @@ const submitTravelApplication = async (req, res) => {
     const isDestValid = validCountries.has(normalize(travelDestination));
     const isNatValid = validCountries.has(normalize(nationality));
 
+    console.log('Validation results:', { isResValid, isDestValid, isNatValid });
+
     if (!isResValid || !isDestValid || !isNatValid) {
       const errors = [];
       if (!isResValid) errors.push(`Residence: "${countryOfResidence}"`);
       if (!isDestValid) errors.push(`Destination: "${travelDestination}"`);
       if (!isNatValid) errors.push(`Nationality: "${nationality}"`);
-      return res.status(400).json({ success: false, message: 'Invalid country selected', invalidFields: errors, tip: 'Please select from the dropdown' });
+      console.warn('Invalid country selection:', errors);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid country selected',
+        invalidFields: errors,
+        tip: 'Please select from the dropdown'
+      });
     }
 
     const application = new TravelApplication({
@@ -53,32 +74,34 @@ const submitTravelApplication = async (req, res) => {
       nationality
     });
 
-    await application.save();
+    const savedApp = await application.save();
+    console.log('Application saved successfully:', savedApp);
 
     res.status(201).json({
       success: true,
       message: 'Submitted successfully!',
       application: {
-        id: application._id,
+        id: savedApp._id,
         countryOfResidence,
         travelDestination,
         nationality,
-        submittedAt: application.submittedAt
+        submittedAt: savedApp.submittedAt
       }
     });
 
-  } catch {
-    res.status(500).json({ success: false, message: 'Server error' });
+  } catch (err) {
+    console.error('Error submitting travel application:', err);
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 };
 
-const getAllApplications = async (req, res) => {
+export const getAllApplications = async (req, res) => {
   try {
     const apps = await TravelApplication.find().sort({ createdAt: -1 });
+    console.log(`Returning ${apps.length} applications`);
     res.json({ success: true, count: apps.length, applications: apps });
-  } catch {
-    res.status(500).json({ success: false, message: 'Failed to load data' });
+  } catch (err) {
+    console.error('Failed to load applications:', err);
+    res.status(500).json({ success: false, message: 'Failed to load data', error: err.message });
   }
 };
-
-module.exports = { getCountries, submitTravelApplication, getAllApplications };

@@ -1,9 +1,13 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
-const travelRoutes = require('./src/routes/travelRoutes');
+// server.js
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import travelRoutes from './src/routes/travelRoutes.js'; // note the .js extension
+
+dotenv.config();
+
 const app = express();
 
 // Middleware
@@ -29,8 +33,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// Pre-load countries when server starts
-// require('./src/data/countries').fetchCountries()
-//   .then(countries => console.log(`Pre-loaded ${countries.length} countries`))
-//   .catch(() => console.log('Started with fallback countries'));
