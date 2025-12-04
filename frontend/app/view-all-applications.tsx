@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-const API_BASE_URL = `http://192.168.1.104:5000/api/travel`;
+const API_BASE_URL = `http://192.168.18.3:5000/api/travel`;
 
 interface Application {
   id: string;

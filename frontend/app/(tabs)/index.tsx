@@ -15,7 +15,7 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 
 // CHANGE THIS TO YOUR PC'S IP ADDRESS (run ipconfig → IPv4)
-const API_BASE_URL = "http://192.168.1.104:5000/api/travel";  // ← CHANGE THIS!
+const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
 
 // NEW: Interface for country with flag support
 interface Country {

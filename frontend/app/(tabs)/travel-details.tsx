@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-const API_BASE_URL = "http://192.168.1.104:5000/api/travel";
+const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 
 interface Application {
   id: string;
