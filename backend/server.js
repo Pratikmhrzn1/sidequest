@@ -18,7 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/travel', travelRoutes);
-
 // Health Check
 app.get('/', (req, res) => {
   res.json({

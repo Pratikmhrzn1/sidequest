@@ -15,7 +15,7 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 
 // CHANGE THIS TO YOUR PC'S IP ADDRESS (run ipconfig → IPv4)
-const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
+const API_BASE_URL = "http://192.168.1.104:5000/api/travel";  // ← CHANGE THIS!
 
 // NEW: Interface for country with flag support
 interface Country {
@@ -169,13 +169,13 @@ export default function Home() {
           Make sure all fields are filled up properly before proceeding
         </Text>
 
-        <View style={styles.footerLinks}>
+        {/* <View style={styles.footerLinks}>
           <Ionicons name="chatbubble-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>Chat With Us</Text>
           <Text style={{ marginHorizontal: 20, fontSize: 30, color: '#6200EE' }}>|</Text>
           <Ionicons name="help-circle-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>FAQs</Text>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );

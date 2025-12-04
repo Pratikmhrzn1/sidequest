@@ -1,4 +1,4 @@
-// app/(tabs)/travel-details.tsx  (or your current file)
+
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
+const API_BASE_URL = "http://192.168.1.104:5000/api/travel";
 
 interface Application {
   id: string;
@@ -159,7 +159,7 @@ export default function TravelDetails() {
             {RecentApplications.slice(0, 2).map((item, index) => (
               <View style={style.RecentCards} key={index}>
                 <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom:10 }}>
                     <View>
                       <View style={{ display: 'flex', flexDirection: 'row' }}>
                         <View style={{
@@ -222,13 +222,13 @@ export const style = StyleSheet.create({
   container: {
     backgroundColor: "#8a2be2",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     shadowOpacity: 3,
     shadowColor: '#000',
     marginBottom:10,
   },
-  value: { color: '#e0e7ff' },
-  paragraph: { color: "#FFF", fontSize: 15 },
+  value: { color: '#e0e7ff', fontSize:18 },
+  paragraph: { color: "#FFF", fontSize: 18 },
   featureCard: {
     width: 170,
     borderRadius: 12,
