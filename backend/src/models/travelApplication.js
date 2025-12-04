@@ -1,4 +1,3 @@
-// src/models/TravelApplication.js
 import mongoose from 'mongoose';
 
 const travelApplicationSchema = new mongoose.Schema(
@@ -18,6 +17,11 @@ const travelApplicationSchema = new mongoose.Schema(
       required: [true, 'Nationality is required'],
       trim: true,
     },
+    status:{
+      type: String,
+      enum: ['pending','in-process','approved','rejected'],
+      default: 'pending'
+    },
   },
   {
     timestamps: true, // automatically adds createdAt & updatedAt
@@ -25,7 +29,9 @@ const travelApplicationSchema = new mongoose.Schema(
 );
 
 // Optional index for faster queries
-travelApplicationSchema.index({ nationality: 1, travelDestination: 1 });
+travelApplicationSchema.index({ nationality: 1 });
+travelApplicationSchema.index({ status: 1});
+travelApplicationSchema.index({createdAt: -1});
 
 const TravelApplication = mongoose.model('TravelApplication', travelApplicationSchema);
 

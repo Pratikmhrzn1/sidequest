@@ -1,5 +1,5 @@
 // backend/server.js
-import express from 'express';
+import express, { application } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -27,7 +27,9 @@ app.get('/', (req, res) => {
     endpoints: {
       countries: '/api/travel/countries',
       submit: 'POST /api/travel/submit',
-      visa: '/api/travel/visa?passport=US&destination=ID'
+      visa: '/api/travel/visa?passport=US&destination=ID',
+      
+
     }
   });
 });

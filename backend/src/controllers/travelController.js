@@ -22,27 +22,27 @@ export const getCountries = async (req, res) => {
 };
 
 export const submitTravelApplication = async (req, res) => {
-  const { countryOfResidence, travelDestination, nationality } = req.body;
-
-  if (!countryOfResidence || !travelDestination || !nationality) {
-    return res.status(400).json({ success: false, message: 'All fields required' });
-  }
-
   try {
-    const app = new TravelApplication({
+    const { countryOfResidence, travelDestination, nationality } = req.body;
+
+    const newApplication = new TravelApplication({
       countryOfResidence,
       travelDestination,
-      nationality
+      nationality,
+      status:'pending'
     });
-    await app.save();
+    const app = await newApplication.save();
+    const { _id: id, __v, ...rest } = app.toObject();
 
     res.status(201).json({
       success: true,
-      message: 'Application saved!',
-      application: app
+      message: "Application saved!",
+      application: { ...rest, id: id.toString() }
     });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error' });
+
+  } catch (error) {
+    console.error("Submit error:", error);
+    res.status(500).json({ success: false, message: "Failed to save application" });
   }
 };
 
@@ -52,5 +52,18 @@ export const getAllApplications = async (req, res) => {
     res.json({ success: true, count: apps.length, applications: apps });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch' });
+  }
+};
+export const getApplicationById = async (req, res) => {
+  try {
+    const app = await TravelApplication.findById(req.params.id);
+    if (!app) return res.status(404).json({ success: false, message: "Application not found" });
+
+    res.json({
+      success: true,
+      application: app
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
