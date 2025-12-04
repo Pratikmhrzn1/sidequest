@@ -1,4 +1,3 @@
-// src/controllers/travelController.js
 import TravelApplication from '../models/travelApplication.js';
 import { fetchCountries } from '../data/countries.js';
 

@@ -1,4 +1,4 @@
-// src/models/VisaRequirement.js   ← Save this exactly
+
 import mongoose from 'mongoose';
 
 // Sub-schema for visa pricing

@@ -1,5 +1,3 @@
-// src/routes/travelRoutes.js
-
 import express from 'express';
 import TravelApplication from '../models/travelApplication.js';
 
@@ -13,14 +11,14 @@ import { getVisaRequirements } from '../controllers/visaController.js';
 import { getVisaInfo } from '../controllers/visaInfoController.js';
 const router = express.Router();
 
-// Your existing routes
+
 router.get('/countries', getCountries);
 router.post('/submit', submitTravelApplication);
 router.get('/applications', getAllApplications);
 router.get('/application/:id', getApplicationById);
 router.get('/visa', getVisaRequirements);
 router.get('/info', getVisaInfo);
-// NEW ROUTE — PERFECT FOR YOUR MOBILE APP
+
 router.get('/my-applications', async (req, res) => {
   try {
     const { nationality } = req.query;

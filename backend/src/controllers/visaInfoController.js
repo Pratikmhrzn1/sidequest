@@ -1,11 +1,8 @@
-// src/controllers/visaInfoController.js  (NEW FILE)
 import VisaInfo from '../models/VisaInfo.js';
 
 export const getVisaInfo = async (req, res) => {
   try {
     let doc = await VisaInfo.findOne();
-
-    // Auto-create default data first time (only runs once)
     if (!doc) {
       doc = await VisaInfo.create({
         nationality: {

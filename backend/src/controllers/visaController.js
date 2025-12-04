@@ -1,4 +1,3 @@
-// src/controllers/visaController.js
 import VisaRequirement from '../models/VisaRequirement.js';
 import axios from 'axios';
 

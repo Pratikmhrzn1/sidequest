@@ -1,4 +1,4 @@
-// src/models/VisaInfo.js
+
 import mongoose from 'mongoose';
 
 const contentItemSchema = new mongoose.Schema({
