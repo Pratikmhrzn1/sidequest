@@ -10,25 +10,36 @@ import {
   Platform,
   Image
 } from 'react-native';
-
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles } from './index';
-
+const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
  
 export default function App(){
+  const router = useRouter();
+  const params = useLocalSearchParams();
+const getParam = (param: any) => {
+  if (typeof param === 'string') return param;
+  if (param && typeof param === 'object') return Object.values(param)[0] as string;
+  return 'Not selected';
+};
+
+const residence = getParam(params.residence);
+const destination = getParam(params.destination);
+const nationality = getParam(params.nationality);
   const userData = [
     {
       title: 'From',
-      data:'Nepal',
+      value:residence,
       flag: 'https://i.imgur.com/Q8SO10S.png'
     },
      {
       title: 'Going to',
-      data:'America',
+      value:destination,
        flag: 'https://static.vecteezy.com/system/resources/previews/047/657/255/non_2x/american-flag-transparent-png.png'
     },
     {
       title: 'Citizen of',
-      data:'Nepal',
+      value:nationality,
        flag: 'https://i.imgur.com/Q8SO10S.png'
     }
 
@@ -60,7 +71,7 @@ export default function App(){
     {
       iconBackground: '#6387feff',
       icon:'https://i.imgur.com/W3wKSvN.png',
-      title: 'United States',
+      title: destination,
       date: '12th Jan, 2024',
       status: 'In Process',
       statusBackground:'#fef3c7',
@@ -72,31 +83,7 @@ export default function App(){
       date: '12th Jan, 2024',
       status: 'In Process',
       statusBackground:'#fef3c7',
-    },
-      {
-      iconBackground: '#e0e7ff',
-      icon:'https://i.imgur.com/Q8SO10S.png',
-      title: 'Tourist Visa',
-      date: '12th Jan, 2024',
-      status: 'In Process',
-      statusBackground:'#fef3c7',
-    },
-      {
-      iconBackground: '#e0e7ff',
-      icon:'https://i.imgur.com/Q8SO10S.png',
-      title: 'Tourist Visa',
-      date: '12th Jan, 2024',
-      status: 'In Process',
-      statusBackground:'#fef3c7',
-    },
-      {
-      iconBackground: '#e0e7ff',
-      icon:'https://i.imgur.com/Q8SO10S.png',
-      title: 'Tourist Visa',
-      date: '12th Jan, 2024',
-      status: 'In Process',
-      statusBackground:'#fef3c7',
-    },
+    }
   ]
   const progressState =[
     {
@@ -131,6 +118,10 @@ const DetailCard: React.FC<DetailCardProps> = ({ title, data }) => {
 };
 
   return(
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: '#f5f5f5' }} // optional: nice background
+      contentContainerStyle={{ paddingBottom: 40 }} // extra space at bottom
+      showsVerticalScrollIndicator={false}>
     <View style={style.body}>
       <View><Text style={[styles.paragraph, {fontWeight: 'bold',}]}>Your Selected Countries</Text>
    <View >
@@ -142,12 +133,10 @@ const DetailCard: React.FC<DetailCardProps> = ({ title, data }) => {
            <View style={{flexDirection:'row', justifyContent:'space-between', marginBottom:10}} key={index}>
             <Text style={style.value}>{item.title}</Text>
            <View style={{flexDirection:'row', alignItems:'center'}}>
-             <Image source={{uri: item.flag}} style={{width:30, height:20, marginRight:10}}></Image>
-            <Text style={style.paragraph}>{item.data}</Text> </View>
+             {/* <Image source={{uri: item.flag}} style={{width:30, height:20, marginRight:10}}></Image> */}
+            <Text style={style.paragraph}>{item.value}</Text></View> 
              </View>
-            <View> 
-              
-              </View> </View>
+             </View>
         )
        })}
         
@@ -215,6 +204,7 @@ const DetailCard: React.FC<DetailCardProps> = ({ title, data }) => {
   </View>
 </View>
     </View>
+    </ScrollView>
   )
 }
 

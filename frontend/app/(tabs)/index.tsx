@@ -15,7 +15,7 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 
 // CHANGE THIS TO YOUR PC'S IP ADDRESS (run ipconfig → IPv4)
-const API_BASE_URL = "http://192.168.56.1:5000/api/travel";  // ← CHANGE THIS!
+const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
 
 // NEW: Interface for country with flag support
 interface Country {
@@ -86,7 +86,10 @@ export default function Home() {
       });
 
       Alert.alert("Success!", "Travel details saved!");
-      router.push('/travel-details'); // Fixed navigation
+      router.push({
+      pathname: '/travel-details',
+      params: { residence, destination, nationality }
+      }); // Fixed navigation
     } catch (err: any) {
       Alert.alert("Failed", err.response?.data?.message || "Network error");
     }
