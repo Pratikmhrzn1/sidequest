@@ -8,16 +8,11 @@ import {
   ScrollView,
   Alert,
   Platform,
-  TextInput
 } from 'react-native';
-import Autocomplete from 'react-native-autocomplete-input';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-import {fetchCountries} from '../../utils/countries';
-
-
 
 // CHANGE THIS TO YOUR PC'S IP ADDRESS (run ipconfig → IPv4)
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
@@ -25,7 +20,7 @@ const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
 // NEW: Interface for country with flag support
 interface Country {
   name: string;
-  cca2: string; 
+  cca2: string; // 2-letter country code (e.g. "IN", "US"
 }
 
 // NEW: Convert country code (cca2) to flag emoji
@@ -39,11 +34,9 @@ const getFlagEmoji = (cca2: string): string => {
 };
 
 export default function Home() {
-  
   const router = useRouter();
 
   const [residence, setResidence] = useState('');
-  const [searchText, setSearchText] = useState('');
   const [destination, setDestination] = useState('');
   const [nationality, setNationality] = useState('');
 
@@ -95,7 +88,7 @@ export default function Home() {
       Alert.alert("Success!", "Travel details saved!");
       router.push({
       pathname: '/travel-details',
-      params: { residence, destination, nationality }
+      params: { residence, destination, nationality, }
       }); // Fixed navigation
     } catch (err: any) {
       Alert.alert("Failed", err.response?.data?.message || "Network error");
@@ -134,41 +127,36 @@ export default function Home() {
             <View style={{ flex: 1 }}>
               <Text style={styles.cardText}>{item.name}</Text>
 
-<View style={styles.pickerContainer}>
-  <TextInput
-    placeholder={item.placeholder}
-    value={
-      index === 0 ? residence :
-      index === 1 ? destination :
-      nationality
-    }
-    onChangeText={(value) => {
-      setSearchText(value);
-      if (index === 0) setResidence(value);
-      else if (index === 1) setDestination(value);
-      else setNationality(value);
-    }}
-    style={{ borderWidth: 1, padding: 12, marginBottom: 8, borderRadius: 8, borderColor: '#ddd' }}
-  />
-  <ScrollView style={{ maxHeight: 200 }}>
-    {countries.filter(country =>
-      country.name.toLowerCase().includes(searchText.toLowerCase())
-    ).map((country) => (
-      <TouchableOpacity
-        key={country.name}
-        onPress={() => {
-          if (index === 0) setResidence(country.name);
-          else if (index === 1) setDestination(country.name);
-          else setNationality(country.name);
-          setSearchText('');
-        }}
-        style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' }}
-      >
-        <Text>{getFlagEmoji(country.cca2)} {country.name}</Text>
-      </TouchableOpacity>
-    ))}
-  </ScrollView>
-</View>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={
+                    index === 0 ? residence :
+                    index === 1 ? destination :
+                    nationality
+                  }
+                  onValueChange={(value) => {
+                    if (index === 0) setResidence(value);
+                    else if (index === 1) setDestination(value);
+                    else setNationality(value);
+                  }}
+                  style={styles.picker}
+                  dropdownIconColor="#333"
+                >
+                  <Picker.Item label={item.placeholder} value="" />
+
+                  {/* CHANGED: Now shows flag emoji + country name */}
+                  {countries.map((country) => {
+                    const flag = getFlagEmoji(country.cca2);
+                    return (
+                      <Picker.Item
+                        key={country.name}
+                        label={`${flag} ${country.name}`}
+                        value={country.name}
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
             </View>
           </View>
         ))}

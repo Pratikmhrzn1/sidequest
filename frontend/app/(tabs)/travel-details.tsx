@@ -117,7 +117,7 @@ export default function TravelDetails() {
 
         {/* Your Selected Countries */}
         <View>
-          <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>Your Selected Countries</Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 25, marginBottom: 10 }}>Your Selected Countries</Text>
           <View style={style.container}>
             {userData.map((item, index) => (
               <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -126,15 +126,11 @@ export default function TravelDetails() {
               </View>
             ))}
           </View>
-          <Image
-            source={{ uri: 'https://png.pngtree.com/png-vector/20250319/ourmid/pngtree-commercial-airplane-in-flight-flying-through-the-sky-for-global-air-png-image_15716035.png' }}
-            style={{ width: '100%', height: 10, marginTop: 20, borderRadius: 12 }}
-          />
         </View>
 
         {/* Quick Actions */}
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ marginBottom: 10 }}>Quick Actions</Text>
+        <View style={{ marginTop: 5 }}>
+          <Text style={{ marginBottom: 15, fontSize:20, paddingLeft:4 }}>Quick Actions</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {cards.map((item, index) => (
               <TouchableOpacity key={index} onPress={item.Navigate}>
@@ -229,9 +225,10 @@ export const style = StyleSheet.create({
     borderRadius: 10,
     shadowOpacity: 3,
     shadowColor: '#000',
+    marginBottom:10,
   },
   value: { color: '#e0e7ff' },
-  paragraph: { color: "#FFF", fontSize: 16 },
+  paragraph: { color: "#FFF", fontSize: 15 },
   featureCard: {
     width: 170,
     borderRadius: 12,
