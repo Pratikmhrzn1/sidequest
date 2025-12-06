@@ -1,4 +1,4 @@
-
+// app/travel-details.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -68,7 +68,6 @@ export default function TravelDetails() {
     return `${day}${suffix} ${month}, ${year}`;
   };
 
-  // DYNAMIC DATA — newest first
   const RecentApplications = applications.length > 0
     ? applications.map(app => {
         const isApproved = app.status === 'approved';
@@ -104,7 +103,11 @@ export default function TravelDetails() {
   ];
 
   const cards = [
-    { backgroundColor: 'blue', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Check Visa Requirements', Navigate: () => router.push('/visa-requirement-screen') },
+    { backgroundColor: 'blue', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Visa Requirements', Navigate: () => router.push({
+        pathname: '/visa-requirement-screen',
+        params: { nationality, destination }
+      })
+    },
     { backgroundColor: 'purple', Icon: 'https://i.imgur.com/flwi3pS.png', title: 'Travel Guides', Navigate: () => router.push('/travel-guides-screens') },
     { backgroundColor: 'orange', Icon: 'https://img.icons8.com/m_outlined/512/FFFFFF/clock.png', title: 'Processing Times', Navigate: () => router.push('/processing-time') },
     { backgroundColor: 'green', Icon: 'https://i.imgur.com/fO4rnUj.png', title: 'Travel Updates', Navigate: () => router.push('/travel-updates') },
@@ -129,7 +132,7 @@ export default function TravelDetails() {
 
         {/* Quick Actions */}
         <View style={{ marginTop: 5 }}>
-          <Text style={{ marginBottom: 15, fontSize:20, paddingLeft:4 }}>Quick Actions</Text>
+          <Text style={{ marginBottom: 15, fontSize: 20, paddingLeft: 4 }}>Quick Actions</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {cards.map((item, index) => (
               <TouchableOpacity key={index} onPress={item.Navigate}>
@@ -142,13 +145,13 @@ export default function TravelDetails() {
           </View>
         </View>
 
-        {/* Recent Application – SHOWS ONLY 1 (Latest) */}
+        {/* Recent Search */}
         <View>
-          <View style={{ marginTop: 20, marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, fontWeight: '600' }}>Recent Application</Text>
+          <View style={{ marginTop: 20, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 18, fontWeight: '600' }}>Recent Search</Text>
             <TouchableOpacity onPress={() => router.push({
-              pathname:'/view-all-applications',
-              params:{nationality}
+              pathname: '/view-all-applications',
+              params: { nationality }
             })}>
               <Text style={{ color: '#00d0ffff' }}>View All</Text>
             </TouchableOpacity>
@@ -157,47 +160,40 @@ export default function TravelDetails() {
           <View>
             {RecentApplications.slice(0, 2).map((item, index) => (
               <View style={style.RecentCards} key={index}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom:10 }}>
-                    <View>
-                      <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <View style={{
-                          backgroundColor: item.iconBackground,
-                          padding: 10,
-                          borderRadius: 8,
-                          marginBottom: 6,
-                          width: 50,
-                          height: 50,
-                          justifyContent: 'center',
-                          alignItems: 'center'
-                        }}>
-                          <Image source={{ uri: item.icon }} style={{ width: 30, height: 20 }} />
-                        </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{
+                      backgroundColor: item.iconBackground,
+                      padding: 10,
+                      borderRadius: 8,
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
+                      <Image source={{ uri: item.icon }} style={{ width: 30, height: 20 }} />
+                    </View>
 
-                        <View style={{ marginLeft: 10 }}>
-                          <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#333', marginLeft: 4 }}>
-                            {item.title}
-                          </Text>
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={{ uri: 'https://i.imgur.com/2J1vXbK.png' }} style={{ width: 20, height: 20, margin: 4 }} />
-                            <Text style={{ color: '#666' }}>{item.date}</Text>
-                          </View>
-                        </View>
+                    <View style={{ marginLeft: 10 }}>
+                      <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }}>
+                        {item.title}
+                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={{ uri: 'https://i.imgur.com/2J1vXbK.png' }} style={{ width: 20, height: 20, marginRight: 6 }} />
+                        <Text style={{ color: '#666' }}>{item.date}</Text>
                       </View>
                     </View>
                   </View>
 
-                  <View>
-                    <View style={{
-                      backgroundColor: item.statusBackground,
-                      paddingVertical: 6,
-                      paddingHorizontal: 12,
-                      borderRadius: 20,
-                    }}>
-                      <Text style={{ color: item.statusTextColor, fontWeight: '600' }}>
-                        {item.status}
-                      </Text>
-                    </View>
+                  <View style={{
+                    backgroundColor: item.statusBackground,
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    borderRadius: 20,
+                  }}>
+                    <Text style={{ color: item.statusTextColor, fontWeight: '600' }}>
+                      {item.status}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -224,9 +220,9 @@ export const style = StyleSheet.create({
     borderRadius: 8,
     shadowOpacity: 3,
     shadowColor: '#000',
-    marginBottom:10,
+    marginBottom: 10,
   },
-  value: { color: '#e0e7ff', fontSize:18 },
+  value: { color: '#e0e7ff', fontSize: 18 },
   paragraph: { color: "#FFF", fontSize: 18 },
   featureCard: {
     width: 170,

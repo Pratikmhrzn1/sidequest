@@ -7,7 +7,6 @@ import {
   getAllApplications,
   getApplicationById,
 } from '../controllers/travelController.js';
-import { getVisaRequirements } from '../controllers/visaController.js';
 import { getVisaInfo } from '../controllers/visaInfoController.js';
 const router = express.Router();
 
@@ -16,8 +15,8 @@ router.get('/countries', getCountries);
 router.post('/submit', submitTravelApplication);
 router.get('/applications', getAllApplications);
 router.get('/application/:id', getApplicationById);
-router.get('/visa', getVisaRequirements);
-router.get('/info', getVisaInfo);
+
+router.get('/information', getVisaInfo);
 
 router.get('/my-applications', async (req, res) => {
   try {

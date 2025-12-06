@@ -4,32 +4,24 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   ScrollView,
-  Alert,
-  Platform,
+  TextInput,
+  Platform,Alert
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 
-// CHANGE THIS TO YOUR PC'S IP ADDRESS (run ipconfig → IPv4)
-const API_BASE_URL = "http://192.168.18.3:5000/api/travel";  // ← CHANGE THIS!
+const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 
-// NEW: Interface for country with flag support
 interface Country {
   name: string;
-  cca2: string; // 2-letter country code (e.g. "IN", "US"
+  cca2: string;
 }
 
-// NEW: Convert country code (cca2) to flag emoji
 const getFlagEmoji = (cca2: string): string => {
   if (!cca2 || cca2.length !== 2) return '';
-  const codePoints = cca2
-    .toUpperCase()
-    .split('')
-    .map(char => 0x1F1E6 + char.charCodeAt(0) - 65);
+  const codePoints = cca2.toUpperCase().split('').map(char => 0x1F1E6 + char.charCodeAt(0) - 65);
   return String.fromCodePoint(...codePoints);
 };
 
@@ -40,16 +32,11 @@ export default function Home() {
   const [destination, setDestination] = useState('');
   const [nationality, setNationality] = useState('');
 
-  // CHANGED: Now stores full country objects (with cca2 for flags)
+  const [searchText, setSearchText] = useState('');
+  const [activeField, setActiveField] = useState<'residence' | 'destination' | 'nationality' | null>(null);
+
   const [countries, setCountries] = useState<Country[]>([]);
-
   const [loading, setLoading] = useState(true);
-
-  const avatars = [
-    { icon: 'home', name: "Country Of Residence", placeholder: "Select residence", bgColor: '#6200EE' },
-    { icon: 'airplane', name: 'Travel Destination', placeholder: "Select destination", bgColor: '#6200EE' },
-    { icon: 'globe', name: 'Country Of Nationality', placeholder: "Select nationality", bgColor: '#6200EE' }
-  ];
 
   useEffect(() => {
     loadCountries();
@@ -58,18 +45,34 @@ export default function Home() {
   const loadCountries = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/countries`);
-      // IMPORTANT: Backend must send: { countries: [{ name: "India", cca2: "IN" }, ...] }
-      const countryList: Country[] = res.data.countries || [];
-      const sorted = countryList
-        .filter(c => c.name && c.cca2)
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const sorted = (res.data.countries || [])
+        .filter((c: Country) => c.name && c.cca2)
+        .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
       setCountries(sorted);
       setLoading(false);
     } catch (err) {
-      console.error("API Error:", err);
-      Alert.alert("Error", "Cannot connect to server. Check IP & backend.");
+      Alert.alert("Error", "Cannot connect to server.");
       setLoading(false);
     }
+  };
+
+  const getSelectedValue = (field: 'residence' | 'destination' | 'nationality') => {
+    if (field === 'residence') return residence;
+    if (field === 'destination') return destination;
+    return nationality;
+  };
+
+  const setSelectedValue = (field: 'residence' | 'destination' | 'nationality', value: string) => {
+    if (field === 'residence') setResidence(value);
+    else if (field === 'destination') setDestination(value);
+    else setNationality(value);
+    setSearchText('');
+    setActiveField(null);
+  };
+
+  const getFlag = (value: string) => {
+    const country = countries.find(c => c.name === value);
+    return country ? getFlagEmoji(country.cca2) : '';
   };
 
   const handleSubmit = async () => {
@@ -85,32 +88,27 @@ export default function Home() {
         nationality
       });
 
-      Alert.alert("Success!", "Travel details saved!");
       router.push({
-      pathname: '/travel-details',
-      params: { residence, destination, nationality, }
-      }); // Fixed navigation
+        pathname: '/travel-details',
+        params: { residence, destination, nationality }
+      });
     } catch (err: any) {
       Alert.alert("Failed", err.response?.data?.message || "Network error");
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200EE" />
-        <Text style={{ marginTop: 20, fontSize: 16 }}>Please wait...</Text>
-      </View>
-    );
-  }
+  const fields = [
+    { key: 'residence', icon: 'home', label: 'Country Of Residence' },
+    { key: 'destination', icon: 'airplane', label: 'Travel Destination' },
+    { key: 'nationality', icon: 'globe', label: 'Country Of Nationality' }
+  ];
 
   return (
     <View style={styles.container}>
-      {/* App Bar - UNCHANGED */}
       <View style={styles.appBar}>
-        <Ionicons name="menu" size={28} color="white" />
+        {/* <Ionicons name="menu" size={28} color="white" /> */}
         <Text style={styles.title}>Travel Information</Text>
-        <Ionicons name="information-circle" size={28} color="white" />
+        {/* <Ionicons name="information-circle" size={28} color="white" /> */}
       </View>
 
       <ScrollView contentContainerStyle={styles.body}>
@@ -118,48 +116,64 @@ export default function Home() {
           Please select the relevant countries for your travel information
         </Text>
 
-        {avatars.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <View style={[styles.avatar, { backgroundColor: item.bgColor }]}>
-              <Ionicons name={item.icon as any} size={28} color="#fff" />
-            </View>
+        {fields.map((field) => {
+          const value = getSelectedValue(field.key as any);
+          const flag = getFlag(value);
 
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardText}>{item.name}</Text>
-
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={
-                    index === 0 ? residence :
-                    index === 1 ? destination :
-                    nationality
-                  }
-                  onValueChange={(value) => {
-                    if (index === 0) setResidence(value);
-                    else if (index === 1) setDestination(value);
-                    else setNationality(value);
-                  }}
-                  style={styles.picker}
-                  dropdownIconColor="#333"
-                >
-                  <Picker.Item label={item.placeholder} value="" />
-
-                  {/* CHANGED: Now shows flag emoji + country name */}
-                  {countries.map((country) => {
-                    const flag = getFlagEmoji(country.cca2);
-                    return (
-                      <Picker.Item
-                        key={country.name}
-                        label={`${flag} ${country.name}`}
-                        value={country.name}
-                      />
-                    );
-                  })}
-                </Picker>
+          return (
+            <View key={field.key} style={styles.card}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                <View style={[styles.avatar, { backgroundColor: '#6200EE' }]}>
+                  <Ionicons name={field.icon as any} size={26} color="#fff" />
+                </View>
+                <Text style={styles.cardText}>{field.label}</Text>
               </View>
+
+              {/* Selected Country Box */}
+              <TouchableOpacity
+                style={styles.selectedBox}
+                onPress={() => setActiveField(field.key as any)}
+              >
+                <Text style={styles.selectedText}>
+                  {flag} {value || `Select ${field.label.toLowerCase()}`}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#666" />
+              </TouchableOpacity>
+
+              {/* Search + Suggestions (Only when active) */}
+              {activeField === field.key && (
+                <View style={styles.searchContainer}>
+                  <TextInput
+                    placeholder={`Search ${field.label.toLowerCase()}...`}
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    style={styles.searchInput}
+                    autoFocus
+                  />
+
+                  <ScrollView style={styles.suggestions} nestedScrollEnabled>
+                    {countries
+                      .filter(c => c.name.toLowerCase().includes(searchText.toLowerCase()))
+                      .slice(0, 2)
+                      .map(c => (
+                        <TouchableOpacity
+                          key={c.name}
+                          style={styles.suggestionItem}
+                          onPress={() => {
+                            setSelectedValue(field.key as any, c.name);
+                          }}
+                        >
+                          <Text style={{ fontSize: 16 }}>
+                            {getFlagEmoji(c.cca2)} {c.name}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                  </ScrollView>
+                </View>
+              )}
             </View>
-          </View>
-        ))}
+          );
+        })}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.BtnTxt}>Show Travel Details</Text>
@@ -169,13 +183,13 @@ export default function Home() {
           Make sure all fields are filled up properly before proceeding
         </Text>
 
-        {/* <View style={styles.footerLinks}>
+        <View style={styles.footerLinks}>
           <Ionicons name="chatbubble-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>Chat With Us</Text>
           <Text style={{ marginHorizontal: 20, fontSize: 30, color: '#6200EE' }}>|</Text>
           <Ionicons name="help-circle-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>FAQs</Text>
-        </View> */}
+        </View>
       </ScrollView>
     </View>
   );
@@ -183,51 +197,65 @@ export default function Home() {
 
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5' },
   appBar: {
     height: Platform.OS === 'ios' ? 110 : 100,
     backgroundColor: '#6200EE',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 30,
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
   title: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
   body: { padding: 22 },
-  paragraph: { fontSize: 16, color: '#444', margin: 10, marginBottom: 24, marginTop: 5, lineHeight: 22 },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
+  paragraph: { fontSize: 16, color: '#444', marginBottom: 24, lineHeight: 22 },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 16,
     borderRadius: 16,
     marginBottom: 16,
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
-  cardText: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 8 },
-  pickerContainer: {
-    borderWidth: 0.3,
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardText: { fontSize: 16, fontWeight: 'bold', color: '#333', marginLeft: 12 },
+  selectedBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eee'
+  },
+  selectedText: { fontSize: 17, color: '#333' },
+  searchContainer: { marginTop: 10 },
+  searchInput: {
+    borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    padding: 14,
+    borderRadius: 12,
     backgroundColor: '#fff',
-    overflow: 'hidden',
+    fontSize: 16
   },
-  picker: {
-    height: 60,
-    color: '#333',
+  suggestions: {
+    maxHeight: 200,
+    marginTop: 8,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#eee'
+  },
+  suggestionItem: {
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0'
   },
   button: {
     backgroundColor: '#66F917',
