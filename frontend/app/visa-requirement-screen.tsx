@@ -1,4 +1,3 @@
-// app/visa-requirement-screen.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -43,7 +42,7 @@ export default function VisaRequirementScreen() {
     fetchVisaInfo();
   }, [nationality, destination]);
 
-  // Find the specific destination info
+
   const originData = visaInfo?.origin?.find((o: any) => o.country === nationality);
   const destinationInfo = originData?.destination?.find((d: any) => d.country === destination);
 
@@ -69,10 +68,7 @@ export default function VisaRequirementScreen() {
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>
-            Visa Requirements
-          </Text>
-          <Text style={styles.subtitle}>
-            {nationality} → {destination}
+            Visa Requirements from {nationality} to {destination}
           </Text>
         </View>
         <View style={styles.card}>
@@ -89,7 +85,7 @@ export default function VisaRequirementScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Visa Requirements</Text>
         <Text style={styles.subtitle}>
-          {nationality} → {destination}
+          From {nationality} to {destination}
         </Text>
       </View>
 
@@ -110,24 +106,6 @@ export default function VisaRequirementScreen() {
         )}
       </View>
 
-      {/* Optional: Show passport requirements */}
-      {originData?.passport_and_details && (
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Passport & Documents</Text>
-          {originData.passport_and_details.type === 'string' ? (
-            <Text style={styles.paragraph}>
-              {originData.passport_and_details.text}
-            </Text>
-          ) : (
-            originData.passport_and_details.text.map((item: string, i: number) => (
-              <View style={styles.bulletItem} key={i}>
-                <Text style={styles.bullet}>•</Text>
-                <Text style={styles.bulletText}>{item}</Text>
-              </View>
-            ))
-          )}
-        </View>
-      )}
     </ScrollView>
   );
 }
@@ -136,7 +114,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   header: { marginBottom: 20, alignItems: 'center' },
-  title: { fontSize: 26, fontWeight: 'bold', color: '#333' },
+  title: { fontSize: 26, fontWeight: 'bold', fontFamily:'mono',color: '#333', padding:20 },
   subtitle: { fontSize: 18, color: '#6200EE', marginTop: 8 },
   card: {
     backgroundColor: '#fff',

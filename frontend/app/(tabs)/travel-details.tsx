@@ -1,4 +1,3 @@
-// app/travel-details.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -10,7 +9,8 @@ import {
   Platform
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 
 interface Application {
@@ -96,11 +96,11 @@ export default function TravelDetails() {
         }
       ];
 
-  const userData = [
-    { title: 'From:', value: residence },
-    { title: 'Going to:', value: destination },
-    { title: 'Citizen of:', value: nationality }
-  ];
+  // const userData = [
+  //   { title: 'From:', value: residence },
+  //   { title: 'Going to:', value: destination },
+  //   { title: 'Citizen of:', value: nationality }
+  // ];
 
   const cards = [
     { backgroundColor: 'blue', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Visa Requirements', Navigate: () => router.push({
@@ -115,24 +115,26 @@ export default function TravelDetails() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }} contentContainerStyle={{ paddingBottom: 40 }}>
-      <View style={style.body}>
-
-        {/* Your Selected Countries */}
-        <View>
-          <Text style={{ fontWeight: 'bold', fontSize: 25, marginBottom: 10 }}>Your Selected Countries</Text>
-          <View style={style.container}>
-            {userData.map((item, index) => (
-              <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                <Text style={style.value}>{item.title}</Text>
-                <Text style={style.paragraph}>{item.value}</Text>
+      <View style={style.appBar}>
+                {/* <Ionicons name="menu" size={28} color="white" /> */}
+                <Text style={style.title}>Travel-Visa</Text>
+                <FontAwesome name="user-circle-o" size={28} color="white" />
               </View>
-            ))}
-          </View>
+      <View style={style.body}>
+        <View>
+        <Text style={{marginBottom: 10, fontSize: 23,fontStyle:'bold', paddingLeft: 4 }}>Where your journey begins!</Text>
         </View>
-
+        {/* Main page  */}
+        <View style={{padding:20, backgroundColor:'skyblue', display:'flex', justifyContent:"center", borderRadius:8}
+        }>
+        <Image
+        source={require("../../assets/images/aeroplane.png")}
+        style={{ width: 300, height:170, alignItems:'center' }}
+        />
+        </View>
         {/* Quick Actions */}
-        <View style={{ marginTop: 5 }}>
-          <Text style={{ marginBottom: 15, fontSize: 20, paddingLeft: 4 }}>Quick Actions</Text>
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ marginBottom: 15, fontSize: 20,fontWeight:600, paddingLeft: 4 }}>Quick Actions</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {cards.map((item, index) => (
               <TouchableOpacity key={index} onPress={item.Navigate}>
@@ -180,6 +182,7 @@ export default function TravelDetails() {
                       </Text>
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image source={{ uri: 'https://i.imgur.com/2J1vXbK.png' }} style={{ width: 20, height: 20, marginRight: 6 }} />
+
                         <Text style={{ color: '#666' }}>{item.date}</Text>
                       </View>
                     </View>
@@ -213,7 +216,7 @@ export default function TravelDetails() {
 }
 
 export const style = StyleSheet.create({
-  body: { marginTop: 40, padding: 20 },
+  body: { marginTop: 10, padding: 20, marginBottom:10 },
   container: {
     backgroundColor: "#8a2be2",
     padding: 15,
@@ -228,7 +231,7 @@ export const style = StyleSheet.create({
     width: 170,
     borderRadius: 12,
     marginBottom: 16,
-    height: 90,
+    height: 130,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -244,5 +247,15 @@ export const style = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
     marginBottom: 20,
-  }
+  },
+  appBar: {
+    height: Platform.OS === 'ios' ? 110 : 95,
+    backgroundColor: '#190581ff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 40,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+  },
+  title: { color: '#fff', fontSize: 30, fontWeight: 'bold' },
 });

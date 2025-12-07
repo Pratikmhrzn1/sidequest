@@ -122,8 +122,8 @@ export default function Home() {
 
           return (
             <View key={field.key} style={styles.card}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                <View style={[styles.avatar, { backgroundColor: '#6200EE' }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 11 }}>
+                <View style={[styles.avatar, { backgroundColor: '#2f0cdbff' }]}>
                   <Ionicons name={field.icon as any} size={26} color="#fff" />
                 </View>
                 <Text style={styles.cardText}>{field.label}</Text>
@@ -183,13 +183,13 @@ export default function Home() {
           Make sure all fields are filled up properly before proceeding
         </Text>
 
-        <View style={styles.footerLinks}>
+        {/* <View style={styles.footerLinks}>
           <Ionicons name="chatbubble-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>Chat With Us</Text>
           <Text style={{ marginHorizontal: 20, fontSize: 30, color: '#6200EE' }}>|</Text>
           <Ionicons name="help-circle-outline" size={24} color="#6200EE" />
           <Text style={styles.linkText}>FAQs</Text>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );
@@ -198,8 +198,8 @@ export default function Home() {
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   appBar: {
-    height: Platform.OS === 'ios' ? 110 : 100,
-    backgroundColor: '#6200EE',
+    height: Platform.OS === 'ios' ? 110 : 95,
+    backgroundColor: '#15046dff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
