@@ -18,29 +18,27 @@ export default function VisaRequirementScreen() {
   const [visaInfo, setVisaInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!nationality || !destination) {
-      setLoading(false);
-      return;
-    }
+useEffect(() => {
+  const fetchVisaInfo = async () => {
+    try {
+      // FIXED: Correct endpoint
+      const res = await fetch(`${API_BASE_URL}/visa-info`);
+      const data = await res.json();
+      
+      console.log("Visa Info:", data); // Debug
 
-    const fetchVisaInfo = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/information`);
-        const data = await res.json();
-
-        if (data.success) {
-          setVisaInfo(data.data);
-        }
-      } catch (err) {
-        console.log("Failed to load visa info");
-      } finally {
-        setLoading(false);
+      if (data.success) {
+        setVisaInfo(data.data);
       }
-    };
+    } catch (err) {
+      console.log("Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchVisaInfo();
-  }, [nationality, destination]);
+  fetchVisaInfo();
+}, [nationality, destination]);
 
 
   const originData = visaInfo?.origin?.find((o: any) => o.country === nationality);

@@ -16,7 +16,7 @@ router.post('/submit', submitTravelApplication);
 router.get('/applications', getAllApplications);
 router.get('/application/:id', getApplicationById);
 
-router.get('/information', getVisaInfo);
+router.get('/visa-info', getVisaInfo);
 
 router.get('/my-applications', async (req, res) => {
   try {

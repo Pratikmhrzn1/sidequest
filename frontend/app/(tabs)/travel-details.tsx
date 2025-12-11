@@ -103,7 +103,7 @@ export default function TravelDetails() {
   // ];
 
   const cards = [
-    { backgroundColor: 'blue', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Visa Requirements', Navigate: () => router.push({
+    { backgroundColor: '#033374ff', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Visa Requirements', Navigate: () => router.push({
         pathname: '/visa-requirement-screen',
         params: { nationality, destination }
       })
@@ -114,7 +114,7 @@ export default function TravelDetails() {
   ];
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }} contentContainerStyle={{ paddingBottom: 10 }}>
       <View style={style.appBar}>
                 {/* <Ionicons name="menu" size={28} color="white" /> */}
                 <Text style={style.title}>Travel-Visa</Text>
@@ -122,10 +122,10 @@ export default function TravelDetails() {
               </View>
       <View style={style.body}>
         <View>
-        <Text style={{marginBottom: 10, fontSize: 23,fontStyle:'bold', paddingLeft: 4 }}>Where your journey begins!</Text>
+        <Text style={{fontSize:25, fontFamily:"arial", fontWeight:700, marginBottom:20, marginTop:-5}}>Where your journey begins!</Text>
         </View>
         {/* Main page  */}
-        <View style={{padding:20, backgroundColor:'skyblue', display:'flex', justifyContent:"center", borderRadius:8}
+        <View style={{padding:20, backgroundColor:'skyblue', display:'flex', justifyContent:"center", borderRadius:10}
         }>
         <Image
         source={require("../../assets/images/aeroplane.png")}
@@ -149,7 +149,7 @@ export default function TravelDetails() {
 
         {/* Recent Search */}
         <View>
-          <View style={{ marginTop: 20, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ marginLeft:4,marginTop: 5, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 18, fontWeight: '600' }}>Recent Search</Text>
             <TouchableOpacity onPress={() => router.push({
               pathname: '/view-all-applications',
@@ -231,7 +231,7 @@ export const style = StyleSheet.create({
     width: 170,
     borderRadius: 12,
     marginBottom: 16,
-    height: 130,
+    height: 110,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -250,7 +250,7 @@ export const style = StyleSheet.create({
   },
   appBar: {
     height: Platform.OS === 'ios' ? 110 : 95,
-    backgroundColor: '#190581ff',
+    backgroundColor: '#180479ff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
