@@ -17,6 +17,7 @@ router.get('/applications', getAllApplications);
 router.get('/application/:id', getApplicationById);
 
 router.get('/visa-info', getVisaInfo);
+//'visa-info/:origin/:nationality/:destination
 
 router.get('/my-applications', async (req, res) => {
   try {

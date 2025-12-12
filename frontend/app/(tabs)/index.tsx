@@ -13,7 +13,7 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
-
+//#c178e8
 interface Country {
   name: string;
   cca2: string;
@@ -154,7 +154,7 @@ export default function Home() {
                   <ScrollView style={styles.suggestions} nestedScrollEnabled>
                     {countries
                       .filter(c => c.name.toLowerCase().includes(searchText.toLowerCase()))
-                      .slice(0, 2)
+                      .slice(0,20)
                       .map(c => (
                         <TouchableOpacity
                           key={c.name}

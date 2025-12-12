@@ -2,13 +2,8 @@
 import mongoose from 'mongoose';
 
 const ContentSchema = new mongoose.Schema({
-  type: {
+  data: {
     type: String,
-    enum: ['string', 'list'],
-    required: true,
-  },
-  text: {
-    type: mongoose.Schema.Types.Mixed,
     required: true
   }
 }, { _id: false });
