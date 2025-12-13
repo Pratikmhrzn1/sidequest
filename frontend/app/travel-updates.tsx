@@ -17,6 +17,7 @@ const travelupdates = () => {
         </View>
     )
 })}
+
     </View>
   )
 }

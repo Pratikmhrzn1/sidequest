@@ -6,12 +6,20 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Platform
+  Platform,
+  Dimensions
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
+
+// Responsive helper function
+const getResponsiveValue = (width: number, small: number, medium: number, large: number) => {
+  if (width < 375) return small; // Small devices (iPhone SE, small Android phones)
+  if (width < 768) return medium; // Medium devices (Standard phones)
+  return large; // Large devices (Tablets, large phones)
+};
 
 interface Application {
   id: string;
@@ -36,6 +44,14 @@ export default function TravelDetails() {
   const nationality = getParam(params.nationality);
 
   const [applications, setApplications] = useState<Application[]>([]);
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
+    return () => subscription?.remove();
+  }, []);
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -55,6 +71,10 @@ export default function TravelDetails() {
 
     fetchApplications();
   }, [nationality]);
+
+  // Responsive helper using dynamic dimensions
+  const r = (small: number, medium: number, large: number) => 
+    getResponsiveValue(dimensions.width, small, medium, large);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -104,7 +124,7 @@ export default function TravelDetails() {
 
   const cards = [
     { backgroundColor: '#033374ff', Icon: 'https://i.imgur.com/gOIAiz1.png', title: 'Visa Requirements', Navigate: () => router.push({
-        pathname: '/visa-requirement-screen',
+        pathname: '/explore',
         params: { nationality, destination }
       })
     },
@@ -113,28 +133,135 @@ export default function TravelDetails() {
     { backgroundColor: 'green', Icon: 'https://i.imgur.com/fO4rnUj.png', title: 'Travel Updates', Navigate: () => router.push('/travel-updates') },
   ];
 
+  // Create responsive styles based on current dimensions
+  const appBarHeight = Platform.OS === 'ios' 
+    ? r(100, 80, 120) 
+    : r(85, 95, 105);
+
+  const responsiveStyles = StyleSheet.create({
+    body: { 
+      marginTop: appBarHeight + r(8, 10, 12), 
+      padding: r(16, 20, 24), 
+      marginBottom: r(8, 10, 12) 
+    },
+    container: {
+      backgroundColor: "#8a2be2",
+      padding: r(12, 15, 18),
+      borderRadius: r(6, 8, 10),
+      shadowOpacity: 3,
+      shadowColor: '#000',
+      marginBottom: r(8, 10, 12),
+    },
+    value: { color: '#e0e7ff', fontSize: r(16, 18, 20) },
+    paragraph: { color: "#FFF", fontSize: r(16, 18, 20) },
+    featureCard: {
+      width: r(140, 170, 200),
+      borderRadius: r(10, 12, 14),
+      marginBottom: r(12, 16, 20),
+      height: r(90, 110, 130),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    featureCardText: { 
+      color: '#FFF', 
+      fontWeight: '600', 
+      marginTop: r(6, 8, 10),
+      fontSize: r(12, 14, 16)
+    },
+    featureCardIcon: { 
+      width: r(22, 26, 30), 
+      height: r(22, 26, 30) 
+    },
+    RecentCards: {
+      backgroundColor: "#fff",
+      padding: r(16, 20, 24),
+      borderRadius: r(10, 12, 14),
+      elevation: 1,
+      shadowColor: "#000",
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      marginBottom: r(16, 20, 24),
+    },
+    appBar: {
+      height: Platform.OS === 'ios' 
+        ? r(100, 80, 120) 
+        : r(85, 95, 105),
+      backgroundColor: '#013E9A',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: r(20, 40, 50),
+      paddingTop: Platform.OS === 'ios' 
+        ? r(45, 20, 55) 
+        : r(15, 20, 25),
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000,
+      elevation: 5,
+    },
+    title: { 
+      color: '#fff', 
+      fontSize: r(22, 30, 36), 
+      fontWeight: 'bold' 
+    },
+  });
+
+  const style = responsiveStyles;
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }} contentContainerStyle={{ paddingBottom: 10 }}>
+    <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       <View style={style.appBar}>
-                {/* <Ionicons name="menu" size={28} color="white" /> */}
-                <Text style={style.title}>Travel-Visa</Text>
-                <FontAwesome name="user-circle-o" size={28} color="white" />
-              </View>
-      <View style={style.body}>
+        {/* <Ionicons name="menu" size={28} color="white" /> */}
+        <Text style={style.title}>Travel-Visa</Text>
+        <FontAwesome name="user-circle-o" size={r(24, 28, 32)} color="white" />
+      </View>
+      <ScrollView 
+        style={{ flex: 1, backgroundColor: '#f5f5f5' }} 
+        contentContainerStyle={{ paddingBottom: r(8, 10, 12) }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={style.body}>
         <View>
-        <Text style={{fontSize:25, fontFamily:"arial", fontWeight:700, marginBottom:20, marginTop:-5}}>Where your journey begins!</Text>
+          <Text style={{
+            fontSize: r(20, 25, 30), 
+            fontFamily: "arial", 
+            fontWeight: '700', 
+            marginBottom: r(16, 20, 24), 
+            marginTop: r(-4, -5, -6)
+          }}>
+            Where your journey begins!
+          </Text>
         </View>
         {/* Main page  */}
-        <View style={{padding:20, backgroundColor:'skyblue', display:'flex', justifyContent:"center", borderRadius:10}
-        }>
-        <Image
-        source={require("../../assets/images/aeroplane.png")}
-        style={{ width: 300, height:170, alignItems:'center' }}
-        />
+        <View style={{
+          padding: r(16, 20, 24), 
+          backgroundColor: 'skyblue', 
+          display: 'flex', 
+          justifyContent: "center", 
+          borderRadius: r(8, 10, 12)
+        }}>
+          <Image
+            source={require("../../assets/images/aeroplane.png")}
+            style={{ 
+              width: r(250, 300, 350), 
+              height: r(140, 170, 200), 
+              alignItems: 'center' 
+            }}
+          />
         </View>
         {/* Quick Actions */}
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ marginBottom: 15, fontSize: 20,fontWeight:600, paddingLeft: 4 }}>Quick Actions</Text>
+        <View style={{ marginTop: r(8, 10, 12) }}>
+          <Text style={{ 
+            marginBottom: r(12, 15, 18), 
+            fontSize: r(18, 20, 24), 
+            fontWeight: '600', 
+            paddingLeft: r(2, 4, 6) 
+          }}>
+            Quick Actions
+          </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {cards.map((item, index) => (
               <TouchableOpacity key={index} onPress={item.Navigate}>
@@ -149,13 +276,24 @@ export default function TravelDetails() {
 
         {/* Recent Search */}
         <View>
-          <View style={{ marginLeft:4,marginTop: 5, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, fontWeight: '600' }}>Recent Search</Text>
+          <View style={{ 
+            marginLeft: r(2, 4, 6),
+            marginTop: r(4, 5, 6), 
+            marginBottom: r(8, 10, 12), 
+            flexDirection: 'row', 
+            justifyContent: 'space-between' 
+          }}>
+            <Text style={{ fontSize: r(16, 18, 22), fontWeight: '600' }}>Recent Search</Text>
             <TouchableOpacity onPress={() => router.push({
               pathname: '/view-all-applications',
               params: { nationality }
             })}>
-              <Text style={{ color: '#00d0ffff' }}>View All</Text>
+              <Text style={{ 
+                color: '#00d0ffff', 
+                fontSize: r(14, 16, 18) 
+              }}>
+                View All
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -163,99 +301,86 @@ export default function TravelDetails() {
             {RecentApplications.slice(0, 2).map((item, index) => (
               <View style={style.RecentCards} key={index}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                     <View style={{
                       backgroundColor: item.iconBackground,
-                      padding: 10,
-                      borderRadius: 8,
-                      width: 50,
-                      height: 50,
+                      padding: r(8, 10, 12),
+                      borderRadius: r(6, 8, 10),
+                      width: r(44, 50, 56),
+                      height: r(44, 50, 56),
                       justifyContent: 'center',
                       alignItems: 'center'
                     }}>
-                      <Image source={{ uri: item.icon }} style={{ width: 30, height: 20 }} />
+                      <Image 
+                        source={{ uri: item.icon }} 
+                        style={{ 
+                          width: r(26, 30, 34), 
+                          height: r(18, 20, 22) 
+                        }} 
+                      />
                     </View>
 
-                    <View style={{ marginLeft: 10 }}>
-                      <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }}>
+                    <View style={{ marginLeft: r(8, 10, 12), flex: 1 }}>
+                      <Text style={{ 
+                        fontWeight: 'bold', 
+                        fontSize: r(14, 16, 18), 
+                        color: '#333' 
+                      }}>
                         {item.title}
                       </Text>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={{ uri: 'https://i.imgur.com/2J1vXbK.png' }} style={{ width: 20, height: 20, marginRight: 6 }} />
-
-                        <Text style={{ color: '#666' }}>{item.date}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: r(4, 6, 8) }}>
+                        <Image 
+                          source={{ uri: 'https://i.imgur.com/2J1vXbK.png' }} 
+                          style={{ 
+                            width: r(18, 20, 22), 
+                            height: r(18, 20, 22), 
+                            marginRight: r(4, 6, 8) 
+                          }} 
+                        />
+                        <Text style={{ 
+                          color: '#666', 
+                          fontSize: r(12, 14, 16) 
+                        }}>
+                          {item.date}
+                        </Text>
                       </View>
                     </View>
                   </View>
 
-                  <View style={{
+                  {/* <View style={{
                     backgroundColor: item.statusBackground,
-                    paddingVertical: 6,
-                    paddingHorizontal: 12,
-                    borderRadius: 20,
+                    paddingVertical: r(4, 6, 8),
+                    paddingHorizontal: r(10, 12, 14),
+                    borderRadius: r(16, 20, 24),
+                    marginLeft: r(8, 10, 12)
                   }}>
-                    <Text style={{ color: item.statusTextColor, fontWeight: '600' }}>
+                    <Text style={{ 
+                      color: item.statusTextColor, 
+                      fontWeight: '600',
+                      fontSize: r(11, 13, 15)
+                    }}>
                       {item.status}
                     </Text>
-                  </View>
+                  </View> */}
                 </View>
               </View>
             ))}
 
             {RecentApplications.length === 0 && (
-              <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
+              <Text style={{ 
+                textAlign: 'center', 
+                color: '#999', 
+                marginTop: r(16, 20, 24),
+                fontSize: r(14, 16, 18)
+              }}>
                 No applications yet
               </Text>
             )}
           </View>
         </View>
 
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
-
-export const style = StyleSheet.create({
-  body: { marginTop: 10, padding: 20, marginBottom:10 },
-  container: {
-    backgroundColor: "#8a2be2",
-    padding: 15,
-    borderRadius: 8,
-    shadowOpacity: 3,
-    shadowColor: '#000',
-    marginBottom: 10,
-  },
-  value: { color: '#e0e7ff', fontSize: 18 },
-  paragraph: { color: "#FFF", fontSize: 18 },
-  featureCard: {
-    width: 170,
-    borderRadius: 12,
-    marginBottom: 16,
-    height: 110,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  featureCardText: { color: '#FFF', fontWeight: '600', marginTop: 8 },
-  featureCardIcon: { width: 26, height: 26 },
-  RecentCards: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    marginBottom: 20,
-  },
-  appBar: {
-    height: Platform.OS === 'ios' ? 110 : 95,
-    backgroundColor: '#180479ff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
-  },
-  title: { color: '#fff', fontSize: 30, fontWeight: 'bold' },
-});

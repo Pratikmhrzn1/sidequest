@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Platform,Alert
+  Platform,
+  Alert,
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -14,6 +16,14 @@ import { useRouter } from 'expo-router';
 
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 //#c178e8
+
+// Responsive helper function
+const getResponsiveValue = (width: number, small: number, medium: number, large: number) => {
+  if (width < 375) return small; // Small devices (iPhone SE, small Android phones)
+  if (width < 768) return medium; // Medium devices (Standard phones)
+  return large; // Large devices (Tablets, large phones)
+};
+
 interface Country {
   name: string;
   cca2: string;
@@ -37,6 +47,18 @@ export default function Home() {
 
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
+    return () => subscription?.remove();
+  }, []);
+
+  // Responsive helper using dynamic dimensions
+  const r = (small: number, medium: number, large: number) => 
+    getResponsiveValue(dimensions.width, small, medium, large);
 
   useEffect(() => {
     loadCountries();
@@ -103,6 +125,154 @@ export default function Home() {
     { key: 'nationality', icon: 'globe', label: 'Country Of Nationality' }
   ];
 
+  // Create responsive styles based on current dimensions
+  const responsiveStyles = StyleSheet.create({
+    container: { 
+      flex: 1, 
+      backgroundColor: '#f5f5f5' 
+    },
+    appBar: {
+      height: Platform.OS === 'ios' 
+        ? r(100, 80, 120) 
+      : r(85, 95, 105),
+      backgroundColor: '#013E9A',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: r(20, 30, 40),
+      paddingTop: Platform.OS === 'ios' 
+        ? r(45, 20, 55) 
+        : r(15, 20, 25),
+    },
+    title: { 
+      color: '#fff', 
+      fontSize: r(18, 22, 26), 
+      fontWeight: 'bold' 
+    },
+    body: { 
+      padding: r(16, 22, 28),
+      paddingBottom: r(20, 24, 32)
+    },
+    paragraph: { 
+      fontSize: r(14, 16, 18), 
+      color: '#444', 
+      marginBottom: r(20, 24, 28), 
+      lineHeight: r(20, 22, 26) 
+    },
+    card: {
+      backgroundColor: '#fff',
+      padding: r(12, 14, 20),
+      borderRadius: r(14, 16, 20),
+      marginBottom: r(12, 16, 20),
+      elevation: 4,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    cardHeader: {
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      marginBottom: r(9, 11, 13)
+    },
+    avatar: {
+      width: r(44, 50, 56),
+      height: r(44, 50, 56),
+      borderRadius: r(44, 50, 56),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    cardText: { 
+      fontSize: r(14, 16, 18), 
+      fontWeight: 'bold', 
+      color: '#333', 
+      marginLeft: r(10, 12, 14) 
+    },
+    selectedBox: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+      padding: r(12, 16, 20),
+      borderRadius: r(10, 12, 14),
+      borderWidth: 1,
+      borderColor: '#eee',
+      minHeight: r(48, 52, 56)
+    },
+    selectedText: { 
+      fontSize: r(15, 17, 19), 
+      color: '#333',
+      flex: 1,
+      flexWrap: 'wrap'
+    },
+    searchContainer: { 
+      marginTop: r(8, 10, 12) 
+    },
+    searchInput: {
+      borderWidth: 1,
+      borderColor: '#ddd',
+      padding: r(12, 14, 16),
+      borderRadius: r(10, 12, 14),
+      backgroundColor: '#fff',
+      fontSize: r(14, 16, 18)
+    },
+    suggestions: {
+      maxHeight: r(180, 200, 250),
+      marginTop: r(6, 8, 10),
+      borderRadius: r(10, 12, 14),
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#eee'
+    },
+    suggestionItem: {
+      padding: r(12, 14, 16),
+      borderBottomWidth: 1,
+      borderBottomColor: '#f0f0f0'
+    },
+    suggestionText: {
+      fontSize: r(14, 16, 18)
+    },
+    button: {
+      backgroundColor: '#6366F1',
+      padding: r(16, 18, 22),
+      borderRadius: r(28, 30, 34),
+      alignItems: 'center',
+      marginTop: r(16, 20, 24),
+      elevation: 6,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+    },
+    BtnTxt: { 
+      fontSize: r(16, 18, 20), 
+      fontWeight: 'bold', 
+      color: '#fff' 
+    },
+    footerText: { 
+      marginTop: r(16, 20, 24), 
+      fontSize: r(12, 14, 16), 
+      color: '#666', 
+      textAlign: 'center',
+      paddingHorizontal: r(10, 0, 0)
+    },
+    footerLinks: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: r(12, 16, 20),
+      marginBottom: r(16, 20, 24),
+    },
+    linkText: { 
+      fontSize: r(14, 16, 18), 
+      color: '#6200EE', 
+      marginHorizontal: r(8, 10, 12), 
+      fontWeight: '600' 
+    },
+  });
+
+  const styles = responsiveStyles;
+
   return (
     <View style={styles.container}>
       <View style={styles.appBar}>
@@ -122,9 +292,13 @@ export default function Home() {
 
           return (
             <View key={field.key} style={styles.card}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 11 }}>
-                <View style={[styles.avatar, { backgroundColor: '#2f0cdbff' }]}>
-                  <Ionicons name={field.icon as any} size={26} color="#fff" />
+              <View style={styles.cardHeader}>
+                <View style={[styles.avatar, { backgroundColor: '#013E9A' }]}>
+                  <Ionicons 
+                    name={field.icon as any} 
+                    size={r(22, 26, 30)} 
+                    color="#fff" 
+                  />
                 </View>
                 <Text style={styles.cardText}>{field.label}</Text>
               </View>
@@ -137,7 +311,11 @@ export default function Home() {
                 <Text style={styles.selectedText}>
                   {flag} {value || `Select ${field.label.toLowerCase()}`}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons 
+                  name="chevron-down" 
+                  size={r(18, 20, 24)} 
+                  color="#666" 
+                />
               </TouchableOpacity>
 
               {/* Search + Suggestions (Only when active) */}
@@ -163,7 +341,7 @@ export default function Home() {
                             setSelectedValue(field.key as any, c.name);
                           }}
                         >
-                          <Text style={{ fontSize: 16 }}>
+                          <Text style={styles.suggestionText}>
                             {getFlagEmoji(c.cca2)} {c.name}
                           </Text>
                         </TouchableOpacity>
@@ -194,85 +372,3 @@ export default function Home() {
     </View>
   );
 }
-
-export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
-  appBar: {
-    height: Platform.OS === 'ios' ? 110 : 95,
-    backgroundColor: '#15046dff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 30,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
-  },
-  title: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
-  body: { padding: 22 },
-  paragraph: { fontSize: 16, color: '#444', marginBottom: 24, lineHeight: 22 },
-  card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 16,
-    elevation: 4,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cardText: { fontSize: 16, fontWeight: 'bold', color: '#333', marginLeft: 12 },
-  selectedBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#eee'
-  },
-  selectedText: { fontSize: 17, color: '#333' },
-  searchContainer: { marginTop: 10 },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 14,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    fontSize: 16
-  },
-  suggestions: {
-    maxHeight: 200,
-    marginTop: 8,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#eee'
-  },
-  suggestionItem: {
-    padding: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
-  },
-  button: {
-    backgroundColor: '#66F917',
-    padding: 18,
-    borderRadius: 30,
-    alignItems: 'center',
-    marginTop: 20,
-    elevation: 6,
-  },
-  BtnTxt: { fontSize: 18, fontWeight: 'bold', color: '#000' },
-  footerText: { marginTop: 20, fontSize: 14, color: '#666', textAlign: 'center' },
-  footerLinks: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 20,
-  },
-  linkText: { fontSize: 16, color: '#6200EE', marginHorizontal: 10, fontWeight: '600' },
-});
