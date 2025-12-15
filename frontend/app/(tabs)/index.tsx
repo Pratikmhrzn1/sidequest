@@ -133,15 +133,15 @@ export default function Home() {
     },
     appBar: {
       height: Platform.OS === 'ios' 
-        ? r(100, 80, 120) 
-      : r(85, 95, 105),
+        ? r(100, 80, 100) 
+      : r(85, 85, 100),
       backgroundColor: '#013E9A',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: r(20, 30, 40),
       paddingTop: Platform.OS === 'ios' 
-        ? r(45, 20, 55) 
+        ? r(45, 10, 55) 
         : r(15, 20, 25),
     },
     title: { 
@@ -195,7 +195,7 @@ export default function Home() {
       backgroundColor: '#f8f9fa',
       padding: r(12, 16, 20),
       borderRadius: r(10, 12, 14),
-      borderWidth: 1,
+      borderWidth: 0.8,
       borderColor: '#eee',
       minHeight: r(48, 52, 56)
     },
@@ -237,7 +237,7 @@ export default function Home() {
       padding: r(16, 18, 22),
       borderRadius: r(28, 30, 34),
       alignItems: 'center',
-      marginTop: r(16, 20, 24),
+      marginTop: r(14, 16, 22),
       elevation: 6,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
@@ -276,6 +276,7 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.appBar}>
+        
         {/* <Ionicons name="menu" size={28} color="white" /> */}
         <Text style={styles.title}>Travel Information</Text>
         {/* <Ionicons name="information-circle" size={28} color="white" /> */}

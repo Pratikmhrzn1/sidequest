@@ -7,11 +7,13 @@ import {
   ScrollView,
   Image,
   Platform,
-  Dimensions
+  Dimensions,
+  Animated
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Animatable from 'react-native-animatable';
+// import Ionicons from '@expo/vector-icons/Ionicons';
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 
 // Responsive helper function
@@ -30,9 +32,42 @@ interface Application {
 }
 
 export default function TravelDetails() {
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+const [animationKey, setAnimationKey] = useState(0);
+const [hasCompletedCycle, setHasCompletedCycle] = useState(false);
+
+const journeyTexts = [
+  "Where your journey begins!",
+  "Explore the world with ease!",
+  "Your adventure starts here!",
+  "Discover new destinations!",
+  "Travel made simple!"
+];
+
+useEffect(() => {
+  // Don't start timer if we've completed the cycle
+  if (hasCompletedCycle) return;
+
+  const timer = setInterval(() => {
+    setCurrentTextIndex((prev) => {
+      const nextIndex = prev + 1;
+      
+      // Check if we've reached the end of the array
+      if (nextIndex >= journeyTexts.length) {
+        setHasCompletedCycle(true); // Stop the loop
+        return prev; // Stay on last text
+      }
+      
+      setAnimationKey((key) => key + 1); // Force re-animation
+      return nextIndex;
+    });
+  }, 3500); // Change every 4 seconds
+
+  return () => clearInterval(timer);
+}, [hasCompletedCycle]);
+
   const router = useRouter();
   const params = useLocalSearchParams();
-
   const getParam = (param: any) => {
     if (typeof param === 'string') return param;
     if (param && typeof param === 'object') return Object.values(param)[0] as string;
@@ -193,7 +228,7 @@ export default function TravelDetails() {
       justifyContent: 'space-between',
       paddingHorizontal: r(20, 40, 50),
       paddingTop: Platform.OS === 'ios' 
-        ? r(45, 20, 55) 
+        ? r(45, 15, 55) 
         : r(15, 20, 25),
       position: 'absolute',
       top: 0,
@@ -224,17 +259,23 @@ export default function TravelDetails() {
         showsVerticalScrollIndicator={false}
       >
         <View style={style.body}>
-        <View>
-          <Text style={{
-            fontSize: r(20, 25, 30), 
-            fontFamily: "arial", 
-            fontWeight: '700', 
-            marginBottom: r(16, 20, 24), 
-            marginTop: r(-4, -5, -6)
-          }}>
-            Where your journey begins!
-          </Text>
-        </View>
+          <View>
+  <Animatable.Text
+    key={animationKey} // Force new animation on each change
+    animation="fadeInLeft" // or "slideInLeft", "bounceIn", "zoomIn"
+    duration={800}
+    style={{
+      fontSize: r(20, 23, 30), 
+      fontFamily: "arial", 
+      fontWeight: '700', 
+      marginBottom: r(16, 20, 24), 
+      marginTop: r(-4, -5, -6),
+    }}
+  >
+    {journeyTexts[currentTextIndex]}
+  </Animatable.Text>
+</View>
+        
         {/* Main page  */}
         <View style={{
           padding: r(16, 20, 24), 

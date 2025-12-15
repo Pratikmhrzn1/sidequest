@@ -89,9 +89,9 @@ export default function ViewAllApplications() {
         {applications.length === 0 ? (
           <View style={{ alignItems: 'center', marginTop: 60 }}>
             <Text style={{ fontSize: 18, color: '#999' }}>No applications found</Text>
-            <Text style={{ color: '#666', marginTop: 10 }}>
+            {/* <Text style={{ color: '#666', marginTop: 10 }}>
               Make sure you submitted with nationality: "{nationality}"
-            </Text>
+            </Text> */}
           </View>
         ) : (
           applications.map((app, i) => {

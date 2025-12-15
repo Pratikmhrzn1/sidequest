@@ -92,7 +92,9 @@ export default function VisaRequirementScreen() {
 
   if (error) {
     return (
+
       <ScrollView style={styles.container} contentContainerStyle={styles.errorContainer}>
+        
         <View style={styles.errorCard}>
           <Text style={styles.errorIcon}>⚠️</Text>
           <Text style={styles.errorTitle}>Error</Text>
@@ -105,6 +107,7 @@ export default function VisaRequirementScreen() {
   if (!nationality || !destination) {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.errorContainer}>
+        
         <View style={styles.errorCard}>
           <Text style={styles.errorIcon}>ℹ️</Text>
           <Text style={styles.errorTitle}>Missing Information</Text>
@@ -147,8 +150,8 @@ export default function VisaRequirementScreen() {
       <View style={styles.topBar}>
   <Ionicons
     name="arrow-back"
-    size={24}
-    color="#1E293B"
+    size={30}
+    color="#373333ff"
     onPress={() =>
       router.push({
         pathname: '/travel-details',
@@ -163,7 +166,7 @@ export default function VisaRequirementScreen() {
           <Text style={styles.headerBadgeText}>Visa Requirements</Text>
         </View> */}
         <Text style={styles.title}>
-          The details requirements for {destination} visa for {nationality} citizens is as follows:
+          The details of {destination} visa for {nationality} citizens is as follows:
         </Text>
         {/* <View style={styles.routeIndicator}>
           <View style={styles.routeDot} />
@@ -174,7 +177,7 @@ export default function VisaRequirementScreen() {
 
       <View style={styles.card}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionIcon}>💬</Text>
+          <Text style={styles.sectionIcon}>ℹ️</Text>
           <Text style={styles.sectionTitle}>Visa Information</Text>
         </View>
 
@@ -213,10 +216,10 @@ const styles = StyleSheet.create({
   },
   topBar: {
     display:"flex",
-    gap:15,
+    gap:5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   sussy:{
       color:'blue',
@@ -259,7 +262,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase'
   },
   title: { 
-    fontSize: 16                                                                        , 
+    fontSize: 16, 
     fontWeight: '500', 
     color: '#1E293B',
     textAlign: 'center',
@@ -293,7 +296,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: '#E2E8F0',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -404,8 +407,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#F1F5F9',
     borderRadius: 12,
-    borderLeftWidth: 2,
-    borderLeftColor: '#6366F1'
+    // borderLeftWidth: 2,
+    // borderLeftColor: '#6366F1'
   },
   footerText: {
     fontSize: 12,
