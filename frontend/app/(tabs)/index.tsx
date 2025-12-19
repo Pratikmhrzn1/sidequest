@@ -111,7 +111,7 @@ export default function Home() {
       });
 
       router.push({
-        pathname: '/travel-details',
+        pathname: '/explore',
         params: { residence, destination, nationality }
       });
     } catch (err: any) {
