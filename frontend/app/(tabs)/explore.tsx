@@ -1,16 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet, TouchableOpacity, Animated, Platform, Dimensions, StatusBar } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 import RenderHTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
 
+const getResponsiveValue = (width: number, small: number, medium: number, large: number) => {
+  if (width < 375) return small;
+  if (width < 768) return medium;
+  return large;
+};
+
 export default function VisaRequirementScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { width } = useWindowDimensions();
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
   
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
+    return () => subscription?.remove();
+  }, []);
+
+  const r = (small: number, medium: number, large: number) => 
+    getResponsiveValue(dimensions.width, small, medium, large);
+
   const getParam = (param: any) => {
     if (typeof param === 'string') return param;
     if (param && typeof param === 'object' && Array.isArray(param)) return param[0] as string;
@@ -21,7 +38,6 @@ export default function VisaRequirementScreen() {
   const nationality = getParam(params.nationality);
   const destination = getParam(params.destination);
 
-  // Define types for the visa info structure
   interface VisaDetails {
     text?: string[];
   }
@@ -73,7 +89,6 @@ export default function VisaRequirementScreen() {
 
         if (data.success) {
           setVisaInfo(data.data);
-          // Animate content in
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 500,
@@ -96,9 +111,67 @@ export default function VisaRequirementScreen() {
   const originData = visaInfo?.origin?.[0];
   const destinationInfo = originData?.destination?.[0];
 
+  const appBarHeight = Platform.OS === 'ios' 
+    ? r(100, 80, 120) 
+    : r(85, 95, 105);
+
+  const responsiveStyles = StyleSheet.create({
+    topBar: {
+      height: appBarHeight,
+      backgroundColor: '#4507f0ff',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: r(20, 25, 50),
+      paddingTop: Platform.OS === 'ios' 
+        ? r(45, 15, 55) 
+        : r(15, 10, 25),
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      elevation: 5,
+    },
+    backButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 80,
+    },
+    backText: {
+      color: '#FFFFFF',
+      fontSize: r(16, 18, 20),
+      fontWeight: '600',
+      marginLeft: 8,
+    },
+    topBarTitle: {
+      color: '#FFFFFF',
+      fontSize: r(18, 20, 24),
+      fontWeight: 'bold',
+      flex: 1,
+      textAlign: 'center',
+    },
+    placeholder: {
+      minWidth: 80,
+    },
+    body: {
+      marginTop: appBarHeight + r(8, 10, 12),
+      padding: r(16, 20, 24),
+      paddingBottom: r(8, 10, 12),
+    },
+  });
+
+  const style = responsiveStyles;
+
   if (loading) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
+        {/* <View style={style.topBar}>
+          <View style={style.backButton} />
+          <Text style={style.topBarTitle}>Visa Requirements</Text>
+          <View style={style.placeholder} />
+        </View> */}
         <View style={styles.center}>
           <ActivityIndicator size="large" color="#6366F1" />
           <Text style={styles.loadingText}>Loading visa requirements...</Text>
@@ -110,6 +183,19 @@ export default function VisaRequirementScreen() {
   if (error) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
+        {/* <View style={style.topBar}>
+          <TouchableOpacity 
+            style={style.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={r(22, 24, 26)} color="#FFFFFF" />
+            <Text style={style.backText}>Back</Text>
+          </TouchableOpacity>
+          <Text style={style.topBarTitle}>Visa Requirements</Text>
+          <View style={style.placeholder} />
+        </View> */}
         <View style={styles.errorContainer}>
           <View style={styles.errorCard}>
             <Text style={styles.errorIcon}>⚠️</Text>
@@ -130,6 +216,12 @@ export default function VisaRequirementScreen() {
   if (!nationality || !destination) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
+        <View style={style.topBar}>
+          <View style={style.backButton} />
+          <Text style={style.topBarTitle}>Visa Requirements</Text>
+          <View style={style.placeholder} />
+        </View>
         <View style={styles.center}>
           <View style={styles.errorCard}>
             <Text style={styles.errorIcon}>ℹ️</Text>
@@ -145,221 +237,231 @@ export default function VisaRequirementScreen() {
 
   if (!destinationInfo || !destinationInfo.details) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.contentContainer}>
-          <View style={styles.header}>
-            <View style={styles.headerBadge}>
-              <Text style={styles.headerBadgeText}>Visa Requirements</Text>
-            </View>
-            <Text style={styles.title}>
-              {nationality} → {destination}
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.noInfoIcon}>📋</Text>
-            <Text style={styles.noInfo}>No specific visa information available for this route yet.</Text>
-            <Text style={styles.noInfoSubtext}>
-              Please check back later or contact our support team for assistance.
-            </Text>
-          </View>
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
+        <View style={style.topBar}>
+          <TouchableOpacity 
+            style={style.backButton}
+            onPress={() => router.push({
+              pathname: '/travel-details',
+              params: { nationality, destination }
+            })}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={r(22, 24, 26)} color="#FFFFFF" />
+            <Text style={style.backText}>Back</Text>
+          </TouchableOpacity>
+          <Text style={style.topBarTitle}>Visa Requirements</Text>
+          <View style={style.placeholder} />
         </View>
-      </ScrollView>
+        <ScrollView 
+          style={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={style.body}>
+            <View style={styles.header}>
+              <Text style={styles.title}>
+                {nationality} → {destination}
+              </Text>
+            </View>
+            <View style={styles.card}>
+              <Text style={styles.noInfoIcon}>📋</Text>
+              <Text style={styles.noInfo}>No specific visa information available for this route yet.</Text>
+              <Text style={styles.noInfoSubtext}>
+                Please check back later or contact our support team for assistance.
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.contentContainer}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
+      <View style={style.topBar}>
         <TouchableOpacity 
-          style={styles.topBar}
+          style={style.backButton}
           onPress={() => router.push({
             pathname: '/travel-details',
             params: { nationality, destination }
           })}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color="#6366F1" />
-          <Text style={styles.sussy}>Back</Text>
+          <Ionicons name="arrow-back" size={r(22, 24, 26)} color="#FFFFFF" />
+          <Text style={style.backText}>Back</Text>
         </TouchableOpacity>
-
-        <Animated.View style={{ opacity: fadeAnim }}>
-          <View style={styles.header}>
-            {/* <View style={styles.headerBadge}>
-              <Text style={styles.headerBadgeText}>Visa Requirements</Text>
-            </View> */}
-            <Text style={styles.title}>
-              The details of {destination} visa for {nationality} citizens is as follows:
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.sectionHeader}>
-              <View style={styles.iconCircle}>
-                <Text style={styles.sectionIcon}>ℹ️</Text>
-              </View>
-              <Text style={styles.sectionTitle}>Visa Information</Text>
-            </View>
-
-            <View style={styles.contentWrapper}>
-              {destinationInfo.details?.text?.map((item: string, i: number) => {
-                const hasContent = item && item.trim().length > 0;
-                
-                if (!hasContent) return null;
-
-                return (
-                  <View key={i} style={styles.htmlContentBlock}>
-                    <RenderHTML
-                      contentWidth={width - 80}
-                      source={{ html: item }}
-                      tagsStyles={{
-                        h2: { 
-                          fontSize: 22, 
-                          fontWeight: '700', 
-                          marginTop: 20,
-                          marginBottom: 12,
-                          color: '#1E293B',
-                          borderBottomWidth: 2,
-                          borderBottomColor: '#E2E8F0',
-                          paddingBottom: 8
-                        },
-                        h3: { 
-                          fontSize: 19, 
-                          fontWeight: '700', 
-                          marginTop: 16,
-                          marginBottom: 10,
-                          color: '#334155'
-                        },
-                        h4: { 
-                          fontSize: 17, 
-                          fontWeight: '600', 
-                          marginTop: 14,
-                          marginBottom: 8,
-                          color: '#475569'
-                        },
-                        p: { 
-                          fontSize: 15, 
-                          marginVertical: 8,
-                          lineHeight: 26,
-                          color: '#475569',
-                          textAlign: 'justify'
-                        },
-                        ul: {
-                          marginVertical: 10,
-                          paddingLeft: 12,
-                          backgroundColor: '#F8FAFC',
-                          borderRadius: 8,
-                          padding: 12
-                        },
-                        ol: {
-                          marginVertical: 10,
-                          paddingLeft: 12,
-                          backgroundColor: '#F8FAFC',
-                          borderRadius: 8,
-                          padding: 12
-                        },
-                        li: {
-                          fontSize: 15,
-                          lineHeight: 26,
-                          marginVertical: 6,
-                          color: '#475569'
-                        },
-                        strong: {
-                          fontWeight: '700',
-                          color: '#1E293B'
-                        },
-                        em: {
-                          fontStyle: 'italic',
-                          color: '#64748B'
-                        },
-                        a: {
-                          color: '#6366F1',
-                          textDecorationLine: 'underline',
-                          fontWeight: '500'
-                        },
-                        blockquote: {
-                          borderLeftWidth: 4,
-                          borderLeftColor: '#6366F1',
-                          paddingLeft: 16,
-                          marginVertical: 12,
-                          backgroundColor: '#EEF2FF',
-                          padding: 12,
-                          borderRadius: 8
-                        },
-                        table: {
-                          marginVertical: 12,
-                          borderWidth: 1,
-                          borderColor: '#E2E8F0',
-                          borderRadius: 8
-                        },
-                        th: {
-                          backgroundColor: '#F1F5F9',
-                          padding: 10,
-                          fontWeight: '700',
-                          color: '#1E293B'
-                        },
-                        td: {
-                          padding: 10,
-                          borderWidth: 1,
-                          borderColor: '#E2E8F0',
-                          color: '#475569'
-                        }
-                      }}
-                      defaultTextProps={{
-                        selectable: true
-                      }}
-                      renderersProps={{
-                        img: {
-                          enableExperimentalPercentWidth: true
-                        }
-                      }}
-                      baseStyle={{
-                        fontSize: 15,
-                        color: '#475569'
-                      }}
-                    />
-                    {i < (destinationInfo.details?.text?.length ?? 0) - 1 && (
-                      <View style={styles.divider} />
-                    )}
-                  </View>
-                );
-              })}
-            </View>
-          </View>
-
-          <View style={styles.footer}>
-            <Ionicons name="information-circle-outline" size={16} color="#6366F1" style={{ textAlign: 'center', marginBottom: 8 }} />
-            <Text style={styles.footerText}>
-              These data are based on previous reports. Please verify with official sources.
-            </Text>
-          </View>
-        </Animated.View>
+        
+        
       </View>
-    </ScrollView>
+      
+      <ScrollView 
+        style={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={style.body}>
+          <Animated.View style={{ opacity: fadeAnim }}>
+            <View style={styles.header}>
+              <Text style={styles.title}>
+                The details of {destination} visa for {nationality} citizens is as follows:
+              </Text>
+            </View>
+
+            <View style={styles.card}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.iconCircle}>
+                  <Text style={styles.sectionIcon}>ℹ️</Text>
+                </View>
+                <Text style={styles.sectionTitle}>Visa Information</Text>
+              </View>
+
+              <View style={styles.contentWrapper}>
+                {destinationInfo.details?.text?.map((item: string, i: number) => {
+                  const hasContent = item && item.trim().length > 0;
+                  
+                  if (!hasContent) return null;
+
+                  return (
+                    <View key={i} style={styles.htmlContentBlock}>
+                      <RenderHTML
+                        contentWidth={width - r(100, 120, 140)}
+                        source={{ html: item }}
+                        tagsStyles={{
+                          h2: { 
+                            fontSize: r(20, 22, 24), 
+                            fontWeight: '700', 
+                            marginTop: 20,
+                            marginBottom: 12,
+                            color: '#1E293B',
+                            borderBottomWidth: 2,
+                            borderBottomColor: '#E2E8F0',
+                            paddingBottom: 8
+                          },
+                          h3: { 
+                            fontSize: r(17, 19, 21), 
+                            fontWeight: '700', 
+                            marginTop: 16,
+                            marginBottom: 10,
+                            color: '#334155'
+                          },
+                          h4: { 
+                            fontSize: r(15, 17, 19), 
+                            fontWeight: '600', 
+                            marginTop: 14,
+                            marginBottom: 8,
+                            color: '#475569'
+                          },
+                          p: { 
+                            fontSize: r(13, 15, 17), 
+                            marginVertical: 8,
+                            lineHeight: r(22, 26, 30),
+                            color: '#475569',
+                            textAlign: 'justify'
+                          },
+                          ul: {
+                            marginVertical: 10,
+                            paddingLeft: 12,
+                            backgroundColor: '#F8FAFC',
+                            borderRadius: 8,
+                            padding: 12
+                          },
+                          ol: {
+                            marginVertical: 10,
+                            paddingLeft: 12,
+                            backgroundColor: '#F8FAFC',
+                            borderRadius: 8,
+                            padding: 12
+                          },
+                          li: {
+                            fontSize: r(13, 15, 17),
+                            lineHeight: r(22, 26, 30),
+                            marginVertical: 6,
+                            color: '#475569'
+                          },
+                          strong: {
+                            fontWeight: '700',
+                            color: '#1E293B'
+                          },
+                          em: {
+                            fontStyle: 'italic',
+                            color: '#64748B'
+                          },
+                          a: {
+                            color: '#6366F1',
+                            textDecorationLine: 'underline',
+                            fontWeight: '500'
+                          },
+                          blockquote: {
+                            borderLeftWidth: 4,
+                            borderLeftColor: '#6366F1',
+                            paddingLeft: 16,
+                            marginVertical: 12,
+                            backgroundColor: '#EEF2FF',
+                            padding: 12,
+                            borderRadius: 8
+                          },
+                          table: {
+                            marginVertical: 12,
+                            borderWidth: 1,
+                            borderColor: '#E2E8F0',
+                            borderRadius: 8
+                          },
+                          th: {
+                            backgroundColor: '#F1F5F9',
+                            padding: 10,
+                            fontWeight: '700',
+                            color: '#1E293B'
+                          },
+                          td: {
+                            padding: 10,
+                            borderWidth: 1,
+                            borderColor: '#E2E8F0',
+                            color: '#475569'
+                          }
+                        }}
+                        defaultTextProps={{
+                          selectable: true
+                        }}
+                        renderersProps={{
+                          img: {
+                            enableExperimentalPercentWidth: true
+                          }
+                        }}
+                        baseStyle={{
+                          fontSize: r(13, 15, 17),
+                          color: '#475569'
+                        }}
+                      />
+                      {i < (destinationInfo.details?.text?.length ?? 0) - 1 && (
+                        <View style={styles.divider} />
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={styles.footer}>
+              <Ionicons name="information-circle-outline" size={16} color="#6366F1" style={{ textAlign: 'center', marginBottom: 8 }} />
+              <Text style={styles.footerText}>
+                These data are based on previous reports. Please verify with official sources.
+              </Text>
+            </View>
+          </Animated.View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#fcf8f8ff',
   },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-  },
-  sussy: {
-    color: '#6366F1',
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  contentContainer: {
-    padding: 20,
-    paddingBottom: 40,
+  scrollContent: {
+    flex: 1,
   },
   center: {
     flex: 1,
@@ -376,25 +478,6 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
     alignItems: 'center',
-  },
-  headerBadge: {
-    backgroundColor: '#6366F1',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  headerBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
   },
   title: {
     fontSize: 16,
@@ -479,7 +562,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    minHeight: 400,
   },
   errorCard: {
     backgroundColor: '#FFFFFF',

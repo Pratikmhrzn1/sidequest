@@ -222,7 +222,7 @@ useEffect(() => {
       height: Platform.OS === 'ios' 
         ? r(100, 80, 120) 
         : r(85, 95, 105),
-      backgroundColor: '#013E9A',
+      backgroundColor: '#4507f0ff',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -234,7 +234,7 @@ useEffect(() => {
       top: 0,
       left: 0,
       right: 0,
-      zIndex: 1000,
+      zIndex: 1,
       elevation: 5,
     },
     title: { 

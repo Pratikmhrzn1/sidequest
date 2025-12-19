@@ -133,9 +133,9 @@ export default function Home() {
     },
     appBar: {
       height: Platform.OS === 'ios' 
-        ? r(100, 80, 100) 
-      : r(85, 85, 100),
-      backgroundColor: '#013E9A',
+        ? r(60, 80, 100) 
+      : r(85, 80, 100),
+      backgroundColor: '#4507f0ff',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -146,7 +146,7 @@ export default function Home() {
     },
     title: { 
       color: '#fff', 
-      fontSize: r(18, 22, 26), 
+      fontSize: r(18, 21, 26), 
       fontWeight: 'bold' 
     },
     body: { 
@@ -176,14 +176,14 @@ export default function Home() {
       marginBottom: r(9, 11, 13)
     },
     avatar: {
-      width: r(44, 50, 56),
-      height: r(44, 50, 56),
+      width: r(44, 45, 56),
+      height: r(44, 45, 56),
       borderRadius: r(44, 50, 56),
       justifyContent: 'center',
       alignItems: 'center',
     },
     cardText: { 
-      fontSize: r(14, 16, 18), 
+      fontSize: r(14, 15, 18), 
       fontWeight: 'bold', 
       color: '#333', 
       marginLeft: r(10, 12, 14) 
@@ -193,14 +193,14 @@ export default function Home() {
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: '#f8f9fa',
-      padding: r(12, 16, 20),
+      padding: r(12, 15, 20),
       borderRadius: r(10, 12, 14),
       borderWidth: 0.8,
       borderColor: '#eee',
       minHeight: r(48, 52, 56)
     },
     selectedText: { 
-      fontSize: r(15, 17, 19), 
+      fontSize: r(14, 16, 19), 
       color: '#333',
       flex: 1,
       flexWrap: 'wrap'
@@ -237,7 +237,7 @@ export default function Home() {
       padding: r(16, 18, 22),
       borderRadius: r(28, 30, 34),
       alignItems: 'center',
-      marginTop: r(14, 16, 22),
+      marginTop: r(14, 14, 22),
       elevation: 6,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
@@ -294,7 +294,7 @@ export default function Home() {
           return (
             <View key={field.key} style={styles.card}>
               <View style={styles.cardHeader}>
-                <View style={[styles.avatar, { backgroundColor: '#013E9A' }]}>
+                <View style={[styles.avatar, { backgroundColor: '#4507f0ff' }]}>
                   <Ionicons 
                     name={field.icon as any} 
                     size={r(22, 26, 30)} 
