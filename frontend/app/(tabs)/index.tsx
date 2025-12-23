@@ -13,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
+import { Background } from '@react-navigation/elements';
 
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
 //#c178e8
@@ -120,28 +121,29 @@ export default function Home() {
   };
 
   const fields = [
-    { key: 'residence', icon: 'home', label: 'Country Of Residence' },
-    { key: 'destination', icon: 'airplane', label: 'Travel Destination' },
-    { key: 'nationality', icon: 'globe', label: 'Country Of Nationality' }
+    { key: 'residence', icon: 'home', label: 'Country Of Residence', backgroundColor:"#10B981" },
+    { key: 'destination', icon: 'airplane', label: 'Travel Destination',backgroundColor:"#8B5CF6" },
+    { key: 'nationality', icon: 'globe', label: 'Country Of Nationality',backgroundColor:"#3B82F6" }
   ];
 
   // Create responsive styles based on current dimensions
   const responsiveStyles = StyleSheet.create({
     container: { 
       flex: 1, 
-      backgroundColor: '#f5f5f5' 
+      backgroundColor: '#f5f5f5', 
+      justifyContent:'center',
     },
     appBar: {
       height: Platform.OS === 'ios' 
         ? r(60, 80, 100) 
       : r(85, 80, 100),
-      backgroundColor: '#4507f0ff',
+      backgroundColor: '#013E9A',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: r(20, 30, 40),
       paddingTop: Platform.OS === 'ios' 
-        ? r(45, 10, 55) 
+        ? r(45, 10, 80) 
         : r(15, 20, 25),
     },
     title: { 
@@ -233,7 +235,7 @@ export default function Home() {
       fontSize: r(14, 16, 18)
     },
     button: {
-      backgroundColor: '#6366F1',
+      backgroundColor: '#013E9A',
       padding: r(16, 18, 22),
       borderRadius: r(28, 30, 34),
       alignItems: 'center',
@@ -294,7 +296,7 @@ export default function Home() {
           return (
             <View key={field.key} style={styles.card}>
               <View style={styles.cardHeader}>
-                <View style={[styles.avatar, { backgroundColor: '#4507f0ff' }]}>
+                <View style={[styles.avatar, { backgroundColor: field.backgroundColor }]}>
                   <Ionicons 
                     name={field.icon as any} 
                     size={r(22, 26, 30)} 

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import { Stack, useRouter } from 'expo-router';
 const TravelUpdates = () => {
+  const router=useRouter();
   const updates = [
     { 
       title: 'Flight Ban Lifted', 
@@ -42,16 +43,38 @@ const TravelUpdates = () => {
   ];
 
   return (
+    <>
+    <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
     <View style={styles.wrapper}>
       <StatusBar barStyle="light-content" backgroundColor="#013E9A" />
       
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
+          {/* Back Button */}
+          <Pressable
+            onPress={() => router.canGoBack() && router.back()}
+            hitSlop={10}
+            style={styles.backButton}
+          >
+            <Ionicons name="chevron-back" size={26} color="#FFFFFF" />
+          </Pressable>
+      
+          {/* Existing Icon */}
           <Ionicons name="notifications" size={32} color="#FFFFFF" />
-          <Text style={styles.headerTitle}>Travel Updates</Text>
+      
+          {/* Existing Title */}
+          <Text style={styles.headerTitle}>Processing Time</Text>
         </View>
-        <Text style={styles.headerSubtitle}>Stay informed with latest travel news</Text>
+      
+        {/* Existing Subtitle */}
+        <Text style={styles.headerSubtitle}>
+          Estimated visa processing duration.
+        </Text>
       </View>
 
       <ScrollView 
@@ -196,6 +219,7 @@ const TravelUpdates = () => {
         </View>
       </ScrollView>
     </View>
+    </>
   );
 };
 
@@ -204,6 +228,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
+  backButton: {
+  marginRight: 8,
+  padding: 4,
+},
   header: {
     backgroundColor: '#013E9A',
     paddingTop: Platform.OS === 'ios' ? 30 : 20,
