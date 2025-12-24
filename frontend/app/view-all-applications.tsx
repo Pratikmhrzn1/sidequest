@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, Pressable, Platform } from 'react-native';
+import { useLocalSearchParams, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 const API_BASE_URL = `http://192.168.18.3:5000/api/travel`;
-
+import { useRouter } from 'expo-router';
 interface Application {
   id: string;
   travelDestination: string;
@@ -13,6 +14,7 @@ interface Application {
 
 export default function ViewAllApplications() {
   const params = useLocalSearchParams();
+  const router=useRouter();
   const nationality = (params.nationality as string)?.trim();
 
   const [applications, setApplications] = useState<Application[]>([]);
@@ -68,23 +70,47 @@ export default function ViewAllApplications() {
     );
   }
 
-  if (!nationality) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5' }}>
-        <Text>No nationality provided</Text>
-      </View>
-    );
-  }
+  // if (!nationality) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5' }}>
+  //       <Text>No nationality provided</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
+    <>
+    <View style={styles.header}>
+  <View style={styles.headerContent}>
+    {/* Back Button */}
+    <Pressable
+      onPress={() => router.canGoBack() && router.back()}
+      hitSlop={10}
+      style={styles.backButton}
+    >
+      <Ionicons name="chevron-back" size={26} color="#FFFFFF" />
+    </Pressable>
+
+    {/* Existing Icon */}
+    <Ionicons name="notifications" size={32} color="#FFFFFF" />
+
+    {/* Existing Title */}
+    <Text style={styles.headerTitle}>All Applications</Text>
+  </View>
+
+  {/* Existing Subtitle */}
+  <Text style={styles.headerSubtitle}>
+    Showing for citizenship of {nationality}
+  </Text>
+</View>
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       <View style={{ padding: 20, paddingTop: 30 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, }}>
+        {/* <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, }}>
           All Applications
         </Text>
         <Text style={{ color: '#666', marginBottom: 20 }}>
           Showing for citizenship of : {nationality}
-        </Text>
+        </Text> */}
 
         {applications.length === 0 ? (
           <View style={{ alignItems: 'center', marginTop: 60 }}>
@@ -131,6 +157,8 @@ export default function ViewAllApplications() {
         )}
       </View>
     </ScrollView>
+    </>
+    
   );
 }
 
@@ -143,5 +171,38 @@ const styles = StyleSheet.create({
     elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-  }
+  },
+  header: {
+      backgroundColor: '#013E9A',
+      paddingTop: Platform.OS === 'ios' ? 30 : 40,
+      paddingBottom: 24,
+      paddingHorizontal: 20,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+    backButton: {
+    marginRight: 8,
+    padding: 4,
+  },
+    headerContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginLeft: 12,
+    },
+    headerSubtitle: {
+      fontSize: 14,
+      color: '#BFDBFE',
+      marginLeft: 44,
+    },
 });

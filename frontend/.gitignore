@@ -4,3 +4,29 @@
 
 expo-env.d.ts
 # @end expo-cli
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# Node modules
+node_modules/
+# Build files
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

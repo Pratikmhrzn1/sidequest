@@ -13,16 +13,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-import { Background } from '@react-navigation/elements';
 
 const API_BASE_URL = "http://192.168.18.3:5000/api/travel";
-//#c178e8
 
 // Responsive helper function
 const getResponsiveValue = (width: number, small: number, medium: number, large: number) => {
-  if (width < 375) return small; // Small devices (iPhone SE, small Android phones)
-  if (width < 768) return medium; // Medium devices (Standard phones)
-  return large; // Large devices (Tablets, large phones)
+  if (width < 375) return small;
+  if (width < 768) return medium;
+  return large;
 };
 
 interface Country {
@@ -42,6 +40,7 @@ export default function Home() {
   const [residence, setResidence] = useState('');
   const [destination, setDestination] = useState('');
   const [nationality, setNationality] = useState('');
+  const [nationalityAutoSet, setNationalityAutoSet] = useState(false);
 
   const [searchText, setSearchText] = useState('');
   const [activeField, setActiveField] = useState<'residence' | 'destination' | 'nationality' | null>(null);
@@ -86,9 +85,20 @@ export default function Home() {
   };
 
   const setSelectedValue = (field: 'residence' | 'destination' | 'nationality', value: string) => {
-    if (field === 'residence') setResidence(value);
-    else if (field === 'destination') setDestination(value);
-    else setNationality(value);
+    if (field === 'residence') {
+      setResidence(value);
+      // Auto-set nationality to same as residence if nationality hasn't been manually changed
+      if (!nationalityAutoSet || nationality === residence) {
+        setNationality(value);
+        setNationalityAutoSet(true);
+      }
+    } else if (field === 'destination') {
+      setDestination(value);
+    } else if (field === 'nationality') {
+      setNationality(value);
+      // Mark that nationality has been manually changed
+      setNationalityAutoSet(true);
+    }
     setSearchText('');
     setActiveField(null);
   };
@@ -278,10 +288,7 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.appBar}>
-        
-        {/* <Ionicons name="menu" size={28} color="white" /> */}
         <Text style={styles.title}>Travel Information</Text>
-        {/* <Ionicons name="information-circle" size={28} color="white" /> */}
       </View>
 
       <ScrollView contentContainerStyle={styles.body}>
@@ -363,14 +370,6 @@ export default function Home() {
         <Text style={styles.footerText}>
           Make sure all fields are filled up properly before proceeding
         </Text>
-
-        {/* <View style={styles.footerLinks}>
-          <Ionicons name="chatbubble-outline" size={24} color="#6200EE" />
-          <Text style={styles.linkText}>Chat With Us</Text>
-          <Text style={{ marginHorizontal: 20, fontSize: 30, color: '#6200EE' }}>|</Text>
-          <Ionicons name="help-circle-outline" size={24} color="#6200EE" />
-          <Text style={styles.linkText}>FAQs</Text>
-        </View> */}
       </ScrollView>
     </View>
   );
