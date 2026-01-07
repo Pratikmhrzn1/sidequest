@@ -5,17 +5,16 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import travelRoutes from './src/routes/travelRoutes.js';
-
+import deviceRoutes from './src/routes/deviceroute.js';
 dotenv.config();
-
 const app = express();
-
 // Middleware
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/api', deviceRoutes);
 // Routes
 app.use('/api/travel', travelRoutes);
 // Health Check
