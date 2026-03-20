@@ -22,7 +22,7 @@ router.get('/application/:id', getApplicationById);
 
 router.get('/visa', getVisaInfo);
 router.post('/visa', addVisaInfo);
-//'visa-info/:origin/:nationality/:destination
+
 router.get('/visa/:origin/:nationality/:destination', getVisaInfoByOriginAndNationalityAndDestination);
 router.get('/my-applications', async (req, res) => {
   try {
@@ -35,22 +35,21 @@ router.get('/my-applications', async (req, res) => {
       });
     }
 
-    // Find applications where nationality matches (case-insensitive)
+   
     const applications = await TravelApplication
       .find({
         nationality: { $regex: `^${nationality}$`, $options: 'i' }
       })
-      .sort({ createdAt: -1 }) // newest first
-      .select('travelDestination createdAt status adminNote') // only needed fields
+      .sort({ createdAt: -1 }) 
+      .select('travelDestination createdAt status adminNote') 
       .lean();
 
-    // Format exactly how your mobile app expects
+    
     const formatted = applications.map(app => ({
       id: app._id.toString(),
       travelDestination: app.travelDestination,
       createdAt: app.createdAt,
-      status: app.status || 'pending',        // supports: pending, in-process, approved, rejected
-      adminNote: app.adminNote || null
+      status: app.status || 'pending',        
     }));
 
     res.json({

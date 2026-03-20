@@ -11,7 +11,6 @@ interface Application {
   createdAt: string;
   status: 'pending' | 'in-process' | 'approved' | 'rejected';
 }
-
 export default function ViewAllApplications() {
   const params = useLocalSearchParams();
   const router=useRouter();

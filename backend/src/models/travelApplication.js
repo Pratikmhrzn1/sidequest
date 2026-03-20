@@ -28,7 +28,7 @@ const travelApplicationSchema = new mongoose.Schema(
   }
 );
 
-// Optional index for faster queries
+
 travelApplicationSchema.index({ nationality: 1 });
 travelApplicationSchema.index({ status: 1});
 travelApplicationSchema.index({createdAt: -1});

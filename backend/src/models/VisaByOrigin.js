@@ -1,20 +1,20 @@
-// src/models/VisaByOrigin.js
+
 import mongoose from 'mongoose';
 
-// Schema for visa details - supports both string and array of strings
+
 const DetailsSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['string', 'list'] // Only allow these two types
+    enum: ['string', 'list'] 
   },
   text: {
-    type: mongoose.Schema.Types.Mixed, // Can be String or Array of Strings
+    type: mongoose.Schema.Types.Mixed, 
     required: true
   }
 }, { _id: false });
 
-// Schema for each destination country
+
 const destinationSchema = new mongoose.Schema({
   country: { 
     type: String, 
@@ -26,7 +26,7 @@ const destinationSchema = new mongoose.Schema({
   }
 }, { _id: false });
 
-// Schema for origin country
+
 const originSchema = new mongoose.Schema({
   country: { 
     type: String, 
@@ -42,7 +42,7 @@ const originSchema = new mongoose.Schema({
   }
 }, { _id: false });
 
-// Main schema
+
 const visaByOriginSchema = new mongoose.Schema({
   origin: { 
     type: [originSchema], 

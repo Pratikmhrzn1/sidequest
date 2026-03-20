@@ -1,10 +1,8 @@
-// src/routes/deviceRoutes.js
 import express from 'express';
 import mongoose from 'mongoose';
 
 const router = express.Router();
 
-// Define schema and model (inside the file or import from models)
 const deviceLogSchema = new mongoose.Schema({
   brand: String,
   manufacturer: String,
@@ -22,13 +20,13 @@ const DeviceLog = mongoose.models.DeviceLog || mongoose.model('DeviceLog', devic
 
 router.post('/device-log', async (req, res) => {
   try {
-    console.log("Received device log:", req.body); // ← See it in backend console
+    console.log("Received device log:", req.body); 
 
     const log = new DeviceLog({
       ...req.body
     });
 
-    await log.save(); // ← This saves to MongoDB
+    await log.save(); 
 
     console.log("Device log saved to DB!");
 
