@@ -49,6 +49,10 @@ app-example
 
 # dependencies
 node_modules/
+android/build/
+android/app/build/
+android/.gradle/
+frontendApp/node_modules/
 
 # Expo
 .expo/
