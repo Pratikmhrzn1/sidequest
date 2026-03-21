@@ -52,7 +52,9 @@ node_modules/
 android/build/
 android/app/build/
 android/.gradle/
+ios/build/
 frontendApp/node_modules/
+.env
 
 # Expo
 .expo/
