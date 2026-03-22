@@ -55,7 +55,7 @@ export default function HomeScreen() {
   const r = (s: number, m: number, l: number) =>
     getResponsiveValue(dimensions.width, s, m, l);
 
-  // ── API ────────────────────────────────────────────────────────────────────
+
   const loadCountries = async () => {
     try {
        console.log('URL being called:', `${API_BASE_URL}/countries`);
